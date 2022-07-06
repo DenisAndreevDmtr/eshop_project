@@ -1,126 +1,143 @@
 package by.teachmeskills.eshop.repositories.impl;
 
+import by.teachmeskills.eshop.entities.BaseEntity;
+import by.teachmeskills.eshop.entities.Order;
 import by.teachmeskills.eshop.entities.Product;
 import by.teachmeskills.eshop.repositories.ProductRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
-    private final JdbcTemplate jdbcTemplate;
-    private static final String GET_ALL_PRODUCTS = "SELECT * FROM product";
-    private static final String GET_ALL_PRODUCTS_BY_CATEGORY_ID = "SELECT * FROM product WHERE category_id=?";
-    private static final String GET_PRODUCT_BY_ID_PRODUCT = "SELECT * FROM product WHERE id=?";
-    private static final String GET_ALL_PRODUCTS_BY_REQUEST = " SELECT * FROM product WHERE name LIKE ? or description LIKE ?";
-    private static final String GET_ALL_PRODUCTS_BY_ID_ORDER = "SELECT internet_shop.product.*\n" +
-            "FROM internet_shop.product\n" +
-            "INNER JOIN internet_shop.order_product\n" +
-            "ON order_product.product_id = internet_shop.product.id\n" +
-            "INNER JOIN internet_shop.order\n" +
-            "ON internet_shop.order.id = internet_shop.order_product.order_id\n" +
-            "WHERE internet_shop.order_product.order_id = ?";
-    private static final String UPDATE_PRODUCT = "UPDATE product SET name=?, description=?, price=?, category_id=?, image_Path=? WHERE id=?";
-    private static final String DELETE_PRODUCT = "DELETE FROM product WHERE id=?";
-    private static final String INSERT_NEW_PRODUCT = "INSERT INTO product (name, description, price, category_id, image_Path) VALUES (?, ?, ?, ?, ?)";
+    private final SessionFactory sessionFactory;
 
-    public ProductRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public ProductRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public List<Product> getAllProductsByCategoryId(int id) {
-        return jdbcTemplate.query(GET_ALL_PRODUCTS_BY_CATEGORY_ID, (rs, rowNum) -> Product.builder()
-                .id(rs.getInt("id"))
-                .name(rs.getString("name"))
-                .imageName(rs.getString("image_Path"))
-                .description(rs.getString("description"))
-                .price(rs.getBigDecimal("price"))
-                .categoryId(rs.getInt("category_id"))
-                .build(), id);
+    public List<Product> getAllProductsByCategoryId(int categoryId) {
+        Session session = sessionFactory.getCurrentSession();
+        Query<Product> query = session.createQuery("select p from Product p where p.category.id=:categoryId");
+        query.setParameter("categoryId", categoryId);
+        return query.list();
     }
 
     public Product getProductById(int id) {
-        return jdbcTemplate.queryForObject(GET_PRODUCT_BY_ID_PRODUCT, (RowMapper<Product>) (rs, rowNum) -> Product.builder()
-                .id(rs.getInt("id"))
-                .name(rs.getString("name"))
-                .imageName(rs.getString("image_Path"))
-                .description(rs.getString("description"))
-                .price(rs.getBigDecimal("price"))
-                .categoryId(rs.getInt("category_id"))
-                .build(), id);
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(Product.class, id);
     }
 
     @Override
     public List<Product> getListProductsByNameOrDesc(String param) {
-        List<Product> productList = null;
         String requestDB = '%' + param + '%';
-        try {
-            productList = jdbcTemplate.query(GET_ALL_PRODUCTS_BY_REQUEST, (rs, rowNum) -> Product.builder()
-                    .id(rs.getInt("id"))
-                    .name(rs.getString("name"))
-                    .imageName(rs.getString("image_Path"))
-                    .description(rs.getString("description"))
-                    .price(rs.getBigDecimal("price"))
-                    .categoryId(rs.getInt("category_id"))
-                    .build(), requestDB, requestDB);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return productList;
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("select p from Product p where p.name like :requestDB or p.description like: requestDB");
+        query.setParameter("requestDB", requestDB);
+        return query.list();
     }
 
     //method should be updated
     @Override
     public Product create(Product entity) {
-        jdbcTemplate.update(INSERT_NEW_PRODUCT, entity.getName(), entity.getDescription(), entity.getPrice(), entity.getCategoryId(),
-                entity.getImageName());
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(entity);
+        transaction.commit();
+        session.close();
         return entity;
     }
 
     @Override
     public List<Product> read() {
-        return jdbcTemplate.query(GET_ALL_PRODUCTS, (rs, rowNum) -> Product.builder()
-                .id(rs.getInt("id"))
-                .name(rs.getString("name"))
-                .imageName(rs.getString("image_Path"))
-                .description(rs.getString("description"))
-                .price(rs.getBigDecimal("price"))
-                .categoryId(rs.getInt("category_id"))
-                .build()
-        );
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery(" from Product ").list();
     }
 
     @Override
-    public List<Product> getAllProductsByOrderId(int id) {
-        List<Product> productList = null;
-        try {
-            productList = jdbcTemplate.query(GET_ALL_PRODUCTS_BY_ID_ORDER, (rs, rowNum) -> Product.builder()
-                    .id(rs.getInt("id"))
-                    .name(rs.getString("name"))
-                    .imageName(rs.getString("image_Path"))
-                    .description(rs.getString("description"))
-                    .price(rs.getBigDecimal("price"))
-                    .categoryId(rs.getInt("category_id"))
-                    .build(), id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return productList;
+    public List<Product> getAllProductsByOrderId(int orderId) {
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("select p from Product p inner join p.orders o where o.id = :orderId");
+        query.setParameter("orderId", orderId);
+        return query.list();
     }
 
     //method should be updated
     @Override
     public Product update(Product entity) {
-        jdbcTemplate.update(UPDATE_PRODUCT, entity.getName(), entity.getDescription(), entity.getPrice(), entity.getCategoryId(), entity.getImageName(), entity.getId());
-        return entity;
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        Product product = session.get(Product.class, entity.getId());
+        product.setName(entity.getName());
+        product.setDescription(entity.getDescription());
+        product.setImageName(entity.getImageName());
+        product.setPrice(entity.getPrice());
+        product.setCategory(entity.getCategory());
+        session.update(product);
+        transaction.commit();
+        session.close();
+        return product;
     }
 
     //method should be updated
     @Override
     public void delete(int id) {
-        jdbcTemplate.update(DELETE_PRODUCT, id);
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        Product product = session.get(Product.class, id);
+        session.delete(product);
+        transaction.commit();
+        session.close();
+    }
+
+    @Override
+    public long countAllProductsByCategory(int categoryId){
+        int pageSize = 1;
+        Session session = sessionFactory.getCurrentSession();
+        Query<Long> query = session.createQuery("select count(p) from Product p where p.category.id=:categoryId");
+        query.setParameter("categoryId", categoryId);
+        long resultQuery=query.getSingleResult();
+        if(resultQuery%pageSize!=0){
+            return query.getSingleResult()/pageSize+1;
+        }
+        return query.getSingleResult()/pageSize;
+    }
+
+    @Override
+    public List<Product> getAllProductsByCategoryIdPaging(int categoryId, int pageReq) {
+        int pageSize = 1;
+        int firstResult;
+        if(pageReq>1){
+            firstResult=(pageReq-1)*pageSize;
+        }
+        else {
+            firstResult=0;
+        }
+        Session session = sessionFactory.getCurrentSession();
+        Query<Product> query = session.createQuery("select p from Product p where p.category.id=:categoryId order by p.name asc");
+        query.setParameter("categoryId", categoryId);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageSize);
+        return query.list();
+    }
+
+    @Override
+    public long countProductsByNameOrDesc(String param) {
+        int pageSize = 5;
+        String requestDB = '%' + param + '%';
+        Session session = sessionFactory.getCurrentSession();
+        Query<Long> query = session.createQuery("select count(p) from Product p where p.name like :requestDB or p.description like: requestDB order by p.name asc");
+        query.setParameter("requestDB", requestDB);
+        long resultQuery=query.getSingleResult();
+        if(resultQuery%pageSize!=0){
+            return query.getSingleResult()/pageSize+1;
+        }
+        return query.getSingleResult()/pageSize;
     }
 }

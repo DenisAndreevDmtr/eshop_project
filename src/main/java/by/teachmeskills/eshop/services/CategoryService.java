@@ -9,4 +9,6 @@ public interface CategoryService extends BaseService<Category> {
     ModelAndView getHomePageData();
 
     ModelAndView getSearchPageData();
+
+    ModelAndView getCategoryDataPaging(int id, int number);
 }

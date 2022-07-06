@@ -1,6 +1,6 @@
 package by.teachmeskills.eshop.services.impl;
 
-import by.teachmeskills.eshop.entities.Cart;
+import by.teachmeskills.eshop.model.Cart;
 import by.teachmeskills.eshop.entities.Order;
 import by.teachmeskills.eshop.entities.Product;
 import by.teachmeskills.eshop.entities.User;
@@ -27,7 +27,6 @@ public class CartService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
 
-
     public CartService(ProductRepository productRepository, OrderRepository orderRepository) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
@@ -44,17 +43,36 @@ public class CartService {
 
     public ModelAndView removeProductFromCart(int productId, Cart shopCart) {
         ModelMap modelParams = new ModelMap();
-        shopCart.removeProduct(productId);
+        Product product = productRepository.getProductById(productId);
+        shopCart.removeProduct(product);
+        modelParams.addAttribute(SHOPPING_CART, shopCart);
+        return new ModelAndView(CART_PAGE.getPath(), modelParams);
+    }
+
+    public ModelAndView increaseProductAmount(int productId, Cart shopCart) {
+        ModelMap modelParams = new ModelMap();
+        Product product = productRepository.getProductById(productId);
+        shopCart.addProduct(product);
+        modelParams.addAttribute(PRODUCT.getValue(), product);
+        modelParams.addAttribute(SHOPPING_CART, shopCart);
+        return new ModelAndView(CART_PAGE.getPath(), modelParams);
+    }
+
+    public ModelAndView decreaseProductAmount(int productId, Cart shopCart) {
+        ModelMap modelParams = new ModelMap();
+        Product product = productRepository.getProductById(productId);
+        shopCart.decreaseAmount(product);
+        modelParams.addAttribute(PRODUCT.getValue(), product);
         modelParams.addAttribute(SHOPPING_CART, shopCart);
         return new ModelAndView(CART_PAGE.getPath(), modelParams);
     }
 
     public ModelAndView checkOut(Cart shopCart, User user) {
         ModelMap model = new ModelMap();
-        List<Product> productList = shopCart.getProducts();
+        List<Product> productList = shopCart.getProductsAndAmount();
         BigDecimal priceOrder = shopCart.getTotalPrice();
         LocalDate date = LocalDate.now();
-        Order order = new Order(priceOrder, date, user.getId(), productList);
+        Order order = new Order(priceOrder, date, user, productList);
         Order createdOrder = orderRepository.create(order);
         model.addAttribute(PRICE_ORDER.getValue(), shopCart.getTotalPrice());
         model.addAttribute(ID_ORDER.getValue(), createdOrder.getId());

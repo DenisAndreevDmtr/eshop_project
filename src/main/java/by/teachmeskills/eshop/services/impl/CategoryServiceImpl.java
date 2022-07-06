@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import static by.teachmeskills.eshop.utils.PagesPathEnum.HOME_PAGE;
 import static by.teachmeskills.eshop.utils.PagesPathEnum.SEARCH_PRODUCT_PAGE;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.CATEGORIES;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.CATEGORY;
+import static by.teachmeskills.eshop.utils.RequestParamsEnum.NUMBER_OF_PAGES;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -58,6 +60,12 @@ public class CategoryServiceImpl implements CategoryService {
         if (Optional.ofNullable(category).isPresent()) {
             List<Product> products = productService.getAllProductsByCategory(category.getId());
             category.setProductList(products);
+            long numberPages=productService.countAllProductsByCategory(id);
+            List<Long> listPages = new ArrayList<>();
+            for (long i = 1; i <=numberPages; i++) {
+                listPages.add(i);
+            }
+            model.addAttribute(NUMBER_OF_PAGES.getValue(), listPages);
             model.addAttribute(CATEGORY.getValue(), category);
         }
         return new ModelAndView(CATEGORY_PAGE.getPath(), model);
@@ -77,5 +85,23 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categoriesList = read();
         model.addAttribute(CATEGORIES.getValue(), categoriesList);
         return new ModelAndView(SEARCH_PRODUCT_PAGE.getPath(), model);
+    }
+
+    @Override
+    public ModelAndView getCategoryDataPaging(int id, int number) {
+        ModelMap model = new ModelMap();
+        Category category = categoryRepository.getCategoryById(id);
+        if (Optional.ofNullable(category).isPresent()) {
+            List<Product> products = productService.getAllProductsByCategoryPaging(category.getId(), number);
+            category.setProductList(products);
+            long numberPages=productService.countAllProductsByCategory(id);
+            List<Long> listPages = new ArrayList<>();
+            for (long i = 1; i <=numberPages; i++) {
+                listPages.add(i);
+            }
+            model.addAttribute(NUMBER_OF_PAGES.getValue(), listPages);
+            model.addAttribute(CATEGORY.getValue(), category);
+        }
+        return new ModelAndView(CATEGORY_PAGE.getPath(), model);
     }
 }

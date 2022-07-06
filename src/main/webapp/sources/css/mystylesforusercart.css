@@ -62,12 +62,12 @@ li {
     justify-content: center;
 }
 
-.card-button {
+.cart-button {
     display: flex;
     justify-content: end;
 }
 
-.card-button a {
+.cart-button a {
     margin: 10px;
 }
 
@@ -78,4 +78,14 @@ li {
 .product-name {
     display: flex;
     justify-content: center;
+}
+
+.cart-amount {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart-amount a {
+    margin: 10px;
 }

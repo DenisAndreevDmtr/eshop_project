@@ -13,4 +13,10 @@ public interface ProductRepository extends BaseRepository<Product> {
     List<Product> getListProductsByNameOrDesc(String param);
 
     List<Product> getAllProductsByOrderId(int id);
+
+    long countAllProductsByCategory(int categoryId);
+
+    List<Product> getAllProductsByCategoryIdPaging(int categoryId, int pageReq);
+
+    long countProductsByNameOrDesc(String param);
 }

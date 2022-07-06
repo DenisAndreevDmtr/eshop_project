@@ -11,5 +11,7 @@ public interface OrderRepository extends BaseRepository<Order> {
 
     List<Integer> getAllOrdersIdsByUserId(int id);
 
-    void createOrderProduct(int productId, int orderId);
+    public long countAllOrdersByUser(int id);
+
+    List<Integer> getAllOrdersIdsByUserIdPaging(int userId, int pageReq);
 }

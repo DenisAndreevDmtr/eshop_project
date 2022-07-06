@@ -7,7 +7,7 @@
     <title>Categories</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../../sources/css/styles.css" rel="stylesheet" type="text/css">
+    <link href="../../sources/css/mystyles.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -22,7 +22,7 @@
     <a href="${contextPath}/search">
         <i class="fa-solid fa-magnifying-glass fa-3x" style="color: black"></i>
     </a>
-    <a href="${contextPath}/signin/profile">
+    <a href="${contextPath}/signin/profile/1">
         <i class="fa-solid fa-user fa-3x" style="color: black"></i>
     </a>
     <a href="${contextPath}/cart">
@@ -36,7 +36,7 @@
             <c:forEach items="${categories}" var="category">
                 <div class="card w-25 m-1" type="category">
                     <div class="card-body">
-                        <a href="${contextPath}/category/${category.getId()}">${category.getName()}</a>
+                        <a href="${contextPath}/category/${category.getId()}/1">${category.getName()}</a>
                         <img class="card-img" style="width:150px;height:120px"
                              src="${contextPath}/images/${category.getImageName()}" alt="Card image">
 

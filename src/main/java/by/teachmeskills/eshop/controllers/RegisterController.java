@@ -15,7 +15,6 @@ import javax.validation.Valid;
 import static by.teachmeskills.eshop.utils.EshopConstants.USER;
 import static by.teachmeskills.eshop.utils.PagesPathEnum.REGISTER_PAGE;
 
-
 @RestController
 @RequestMapping("/register")
 public class RegisterController {

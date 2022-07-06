@@ -11,4 +11,8 @@ public interface ProductService extends BaseService<Product> {
     ModelAndView getProductData(int id);
 
     ModelAndView getSearchResult(String searchParametr);
+
+    List<Product> getAllProductsByCategoryPaging(int categoryId, int number);
+
+    public long countAllProductsByCategory(int categoryId);
 }

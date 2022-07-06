@@ -4,7 +4,7 @@ import by.teachmeskills.eshop.entities.Category;
 import by.teachmeskills.eshop.entities.Order;
 import by.teachmeskills.eshop.entities.Product;
 import by.teachmeskills.eshop.entities.User;
-import by.teachmeskills.eshop.exceptions.AuthorizationException;
+import by.teachmeskills.eshop.model.CompositeOrderForView;
 import by.teachmeskills.eshop.repositories.OrderRepository;
 import by.teachmeskills.eshop.repositories.ProductRepository;
 import by.teachmeskills.eshop.repositories.UserRepository;
@@ -17,8 +17,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static by.teachmeskills.eshop.utils.PagesPathEnum.HOME_PAGE;
 import static by.teachmeskills.eshop.utils.PagesPathEnum.PROFILE_PAGE;
@@ -29,6 +32,7 @@ import static by.teachmeskills.eshop.utils.PagesPathEnum.STATUS_REGISTER_PAGE;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.CATEGORIES;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.LOGGED_IN_USER;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.LOGIN;
+import static by.teachmeskills.eshop.utils.RequestParamsEnum.NUMBER_OF_PAGES;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.USER_ORDERS;
 
 @Service
@@ -102,6 +106,12 @@ public class UserServiceImpl implements UserService {
             order.setProductsInOrder(orderProducts);
             userOrders.add(order);
         }
+        long numberPages = orderRepository.countAllOrdersByUser(idUser);
+        List<Long> listPages = new ArrayList<>();
+        for (long i = 1; i <= numberPages; i++) {
+            listPages.add(i);
+        }
+        modelMap.addAttribute(NUMBER_OF_PAGES.getValue(), listPages);
         modelMap.addAttribute(USER_ORDERS.getValue(), userOrders);
         modelAndView.setViewName(PROFILE_PAGE.getPath());
         modelAndView.addAllObjects(modelMap);
@@ -139,5 +149,43 @@ public class UserServiceImpl implements UserService {
             modelAndView.addObject(field + "Error", Objects.requireNonNull(bindingResult.getFieldError(field))
                     .getDefaultMessage());
         }
+    }
+
+    @Override
+    public ModelAndView getDataAboutLoggedInUserPaging(User user, int number) {
+        ModelAndView modelAndView = new ModelAndView();
+        ModelMap modelMap = new ModelMap();
+        User loggedInUser = userRepository.getUserByLoginAndPassword(user.getLogin(), user.getPassword()).get();
+        modelMap.addAttribute(LOGGED_IN_USER.getValue(), loggedInUser);
+        int idUser = loggedInUser.getId();
+        user.setId(idUser);
+        List<Integer> ordersIds = orderRepository.getAllOrdersIdsByUserIdPaging(idUser, number);
+        List<CompositeOrderForView> listComposite = new ArrayList<>();
+        Map<Product, Long> productAndAmount;
+
+        for (int i = 0; i < ordersIds.size(); i++) {
+            List<Product> orderProducts = productRepository.getAllProductsByOrderId(ordersIds.get(i));
+            Order order = orderRepository.getOrderById(ordersIds.get(i));
+            productAndAmount = orderProducts.stream().
+                    collect(Collectors.groupingBy(Function.identity(),
+                            Collectors.counting()));
+            CompositeOrderForView compositeOrderForView = CompositeOrderForView.builder().
+                    idOrder(order.getId()).
+                    sumOrder(order.getPriceOrder()).
+                    date(order.getDate()).
+                    productAndAmount(productAndAmount).
+                    build();
+            listComposite.add(compositeOrderForView);
+        }
+        long numberPages = orderRepository.countAllOrdersByUser(idUser);
+        List<Long> listPages = new ArrayList<>();
+        for (long i = 1; i <= numberPages; i++) {
+            listPages.add(i);
+        }
+        modelMap.addAttribute(NUMBER_OF_PAGES.getValue(), listPages);
+        modelMap.addAttribute(USER_ORDERS.getValue(), listComposite);
+        modelAndView.setViewName(PROFILE_PAGE.getPath());
+        modelAndView.addAllObjects(modelMap);
+        return modelAndView;
     }
 }

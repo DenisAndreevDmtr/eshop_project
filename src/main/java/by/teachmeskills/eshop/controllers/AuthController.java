@@ -5,6 +5,7 @@ import by.teachmeskills.eshop.exceptions.AuthorizationException;
 import by.teachmeskills.eshop.services.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,12 @@ public class AuthController {
     @GetMapping("/profile")
     public ModelAndView getUserData(@ModelAttribute(USER) User user) {
         return userService.getDataAboutLoggedInUser(user);
+    }
+
+    @GetMapping("/profile/{number}")
+    public ModelAndView getUserData(@ModelAttribute(USER) User user,
+                                    @PathVariable int number) {
+        return userService.getDataAboutLoggedInUserPaging(user, number);
     }
 
     @ModelAttribute(USER)

@@ -23,7 +23,9 @@ public enum RequestParamsEnum {
     SEARCH_PARAMETR("searchParametr"),
     SEARCH_RESULT("search_result"),
     NAME_CATEGORY("namecategory"),
-    ERROR_PARAM("error");
+    ERROR_PARAM("error"),
+    NUMBER_OF_PAGES("number_of_pages")
+    ;
 
     private final String value;
 

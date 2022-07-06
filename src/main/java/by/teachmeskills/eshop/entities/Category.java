@@ -1,40 +1,34 @@
 package by.teachmeskills.eshop.entities;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.List;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
+@ToString
+
 @SuperBuilder
-@Data
+@Entity
+@NoArgsConstructor
+@Table(name = "category")
 public class Category extends BaseEntity {
+    @Column(name = "name")
     private String name;
+    @Column(name = "rating")
     private int rating;
+    @Column(name = "image_Path")
     private String imageName;
+    @OneToMany(mappedBy = "category", orphanRemoval = true, cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Product> productList;
-
-    public Category(int id, String name, int rating, String imageName) {
-        super(id);
-        this.name = name;
-        this.rating = rating;
-        this.imageName = imageName;
-    }
-
-    public Category(int id, String name, int rating, String imageName, List<Product> productList) {
-        super(id);
-        this.name = name;
-        this.rating = rating;
-        this.imageName = imageName;
-        this.productList = productList;
-    }
-
-    public String getImageName() {
-        return imageName;
-    }
 }

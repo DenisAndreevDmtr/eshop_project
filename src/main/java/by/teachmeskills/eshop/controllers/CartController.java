@@ -1,6 +1,6 @@
 package by.teachmeskills.eshop.controllers;
 
-import by.teachmeskills.eshop.entities.Cart;
+import by.teachmeskills.eshop.model.Cart;
 import by.teachmeskills.eshop.entities.User;
 import by.teachmeskills.eshop.services.impl.CartService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +45,18 @@ public class CartController {
     public ModelAndView removeProductFromCart(@RequestParam(PRODUCT_ID_PARAM) String id, @ModelAttribute(SHOPPING_CART) Cart shopCart) {
         int productId = Integer.parseInt(id);
         return cartService.removeProductFromCart(productId, shopCart);
+    }
+
+    @GetMapping("/increase")
+    public ModelAndView increaseProductAmount(@RequestParam(PRODUCT_ID_PARAM) String id, @ModelAttribute(SHOPPING_CART) Cart shopCart) {
+        int productId = Integer.parseInt(id);
+        return cartService.increaseProductAmount(productId, shopCart);
+    }
+
+    @GetMapping("/decrease")
+    public ModelAndView decreaseProductAmount(@RequestParam(PRODUCT_ID_PARAM) String id, @ModelAttribute(SHOPPING_CART) Cart shopCart) {
+        int productId = Integer.parseInt(id);
+        return cartService.decreaseProductAmount(productId, shopCart);
     }
 
     @GetMapping("/purchase")

@@ -7,9 +7,9 @@
     <title>Profile</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../../sources/css/styles.css" rel="stylesheet" type="text/css">
+    <link href="../../sources/css/mystyles.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="../../sources/css/styles.css" rel="stylesheet" type="text/css">
+    <link href="../../sources/css/mystyles.css" rel="stylesheet" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -56,25 +56,27 @@
     <div class="container-orders-title">
         <p>History</p>
     </div>
+
     <c:if test="${not empty userOrders}">
         <c:forEach items="${userOrders}" var="userOrder">
             <div class="order">
                 <div class="order-info">
-                    <p>ID number order:<b> ${userOrder.getId()}</b></p>
-                    <p> Sum order:<b> ${userOrder.getPriceOrder()}</b></p>
+                    <p>ID number order:<b> ${userOrder.getIdOrder()}</b></p>
+                    <p> Sum order:<b> ${userOrder.getSumOrder()}</b></p>
                     <p> Date order:<b> ${userOrder.getDate()}</b></p>
                 </div>
                 <div class="row order-list">
-                    <c:forEach items="${userOrder.getProductsInOrder()}" var="product">
+                    <c:forEach items="${userOrder.getProductAndAmount().entrySet()}" var="product">
                         <div class="card-body order-product">
                             <img class="card-img" style="width:50px;height:50px"
-                                 src="${contextPath}/images/${product.getImageName()}" alt="Product image"/>
+                                 src="${contextPath}/images/${product.getKey().getImageName()}" alt="Product image"/>
                             <ul class="list-group order-product-info">
                                 <li class="list-group-item"><b>Name:</b> <a
-                                        href="${contextPath}/product/${product.getId()}">${product.getName()}</a></li>
-                                <li class="list-group-item"><b>Description:</b> <a>${product.getDescription()}</a>
+                                        href="${contextPath}/product/${product.getKey().getId()}">${product.getKey().getName()}</a></li>
+                                <li class="list-group-item"><b>Description:</b> <a>${product.getKey().getDescription()}</a>
                                 </li>
-                                <li class="list-group-item"><b>Price:</b> <a>${product.getPrice()}</a></li>
+                                <li class="list-group-item"><b>Price per unit:</b> <a>${product.getKey().getPrice()}</a></li>
+                                <li class="list-group-item"><b>Amount in order:</b> <a>${product.getValue()}</a></li>
                             </ul>
                         </div>
                     </c:forEach>
@@ -82,6 +84,17 @@
             </div>
         </c:forEach>
     </c:if>
+
+    <div class="pages">
+        <c:if test="${not empty number_of_pages}">
+            <c:forEach items="${number_of_pages}" var="page">
+                <a href="${contextPath}/signin/profile/${page}">
+                        ${page} </a>
+            </c:forEach>
+        </c:if>
+    </div>
+
+
 </div>
 </body>
 </html>

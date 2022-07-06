@@ -2,69 +2,57 @@ package by.teachmeskills.eshop.repositories.impl;
 
 import by.teachmeskills.eshop.entities.Category;
 import by.teachmeskills.eshop.repositories.CategoryRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public class CategoryRepositoryImpl implements CategoryRepository {
-    private final JdbcTemplate jdbcTemplate;
-    private static final String GET_ALL_CATEGORIES = "SELECT * FROM category";
-    private static final String GET_CATEGORY_NAME_BY_ID = "SELECT internet_shop.category.name FROM internet_shop.category WHERE id=?";
-    private static final String CREATE_NEW_CATEGORY = "INSERT INTO category (name, rating, image_Path) VALUES (?, ?, ?)";
-    private static final String GET_CATEGORY_BY_NAME = "SELECT * FROM category WHERE name=?";
-    private static final String UPDATE_CATEGORY = "UPDATE category SET rating=? WHERE name=?";
-    private static final String DELETE_CATEGORY = "DELETE FROM category WHERE id=?";
-    private static final String GET_CATEGORY_BY_ID = "SELECT * FROM category WHERE id=?";
+    private final SessionFactory sessionFactory;
 
-    public CategoryRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public CategoryRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public List<Category> getAllCategories() {
-        return jdbcTemplate.query(GET_ALL_CATEGORIES, (rs, rowNum) -> Category.builder()
-                .id(rs.getInt("id"))
-                .name(rs.getString("name"))
-                .rating(rs.getInt("rating"))
-                .imageName(rs.getString("image_path"))
-                .build()
-        );
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery(" from Category").list();
     }
 
     @Override
     public String getCategoryNameByID(int id) {
-        return jdbcTemplate.queryForObject(GET_CATEGORY_NAME_BY_ID, (RowMapper<String>) (rs, rowNum) -> rs.getString("name"), id);
+        Session session = sessionFactory.getCurrentSession();
+        return (String) session.get(Category.class.getName(), id);
     }
 
 
     @Override
     public Category getCategoryById(int id) {
-        return jdbcTemplate.queryForObject(GET_CATEGORY_BY_ID, (RowMapper<Category>) (rs, rowNum) -> Category.builder()
-                .id(rs.getInt("id"))
-                .name(rs.getString("name"))
-                .imageName(rs.getString("image_path"))
-                .rating(rs.getInt("rating"))
-                .build(), id);
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(Category.class, id);
     }
 
     //method should be updated
     @Override
     public Category create(Category entity) {
-        jdbcTemplate.update(CREATE_NEW_CATEGORY, entity.getName(), entity.getRating(), entity.getImageName());
-        return getCategoryByName(entity.getName());
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(entity);
+        transaction.commit();
+        session.close();
+        return entity;
     }
 
-
     private Category getCategoryByName(String nameCategory) {
-        return jdbcTemplate.queryForObject(GET_CATEGORY_BY_NAME, (RowMapper<Category>) (rs, rowNum) -> Category.builder()
-                .id(rs.getInt("id"))
-                .name(rs.getString("name"))
-                .imageName(rs.getString("image_path"))
-                .rating(rs.getInt("rating"))
-                .build(), nameCategory);
+        Session session = sessionFactory.getCurrentSession();
+        Query<Category> query = session.createQuery("select c from Category c where c.name=:nameCategory");
+        query.setParameter("nameCategory", nameCategory);
+        return query.getSingleResult();
     }
 
     //method should be updated
@@ -76,13 +64,26 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     //method should be updated
     @Override
     public Category update(Category entity) {
-        jdbcTemplate.update(UPDATE_CATEGORY, entity.getRating(),entity.getName());
-        return getCategoryByName(entity.getName());
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        Category category = session.get(Category.class, entity.getId());
+        category.setName(category.getName());
+        category.setImageName(entity.getImageName());
+        category.setRating(entity.getRating());
+        session.update(category);
+        transaction.commit();
+        session.close();
+        return category;
     }
 
     //method should be updated
     @Override
     public void delete(int id) {
-        jdbcTemplate.update(DELETE_CATEGORY, id);
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        Category category = session.get(Category.class, id);
+        session.delete(category);
+        transaction.commit();
+        session.close();
     }
 }

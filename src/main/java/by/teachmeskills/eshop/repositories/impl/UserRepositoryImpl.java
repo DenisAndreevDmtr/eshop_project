@@ -2,111 +2,94 @@ package by.teachmeskills.eshop.repositories.impl;
 
 import by.teachmeskills.eshop.entities.User;
 import by.teachmeskills.eshop.repositories.UserRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    private final JdbcTemplate jdbcTemplate;
-    private static final String GET_USER_BY_ID = "SELECT * FROM user WHERE id=?";
-    private static final String GET_USER_BY_LOGIN_AND_PASSWORD = "SELECT * FROM user WHERE login=? AND password=?";
-    private static final String GET_USER_BY_LOGIN = "SELECT * FROM user WHERE login=?";
-    private static final String INSERT_NEW_USER = "INSERT INTO user (name, surname, email, password, login, birth_date, balance) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String GET_ALL_USERS = "SELECT * FROM user";
-    private static final String UPDATE_USER = "UPDATE user SET name=?, surname=?, email=?, password=?, login=?, birth_date=?, balance=? WHERE login=?";
-    private static final String DELETE_USER = "DELETE FROM user WHERE id=?";
+    private final SessionFactory sessionFactory;
 
-    public UserRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public UserRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public User getUserById(int id) {
-        return jdbcTemplate.queryForObject(GET_USER_BY_ID, (RowMapper<User>) (rs, rowNum) -> User.builder()
-                .id(rs.getInt("id"))
-                .login(rs.getString("login"))
-                .password(rs.getString("password"))
-                .name(rs.getString("name"))
-                .surname(rs.getString("surname"))
-                .dateBorn(rs.getDate("birth_date").toLocalDate())
-                .eMail(rs.getString("email"))
-                .balance(rs.getBigDecimal("balance"))
-                .build(), id);
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(User.class, id);
     }
 
     @Override
     public Optional<User> getUserByLoginAndPassword(String login, String password) {
-        User user = jdbcTemplate.queryForObject(GET_USER_BY_LOGIN_AND_PASSWORD, (RowMapper<User>) (rs, rowNum) -> User.builder()
-                .id(rs.getInt("id"))
-                .login(rs.getString("login"))
-                .password(rs.getString("password"))
-                .name(rs.getString("name"))
-                .surname(rs.getString("surname"))
-                .dateBorn(rs.getDate("birth_date").toLocalDate())
-                .eMail(rs.getString("email"))
-                .balance(rs.getBigDecimal("balance"))
-                .build(), login, password);
-        return Optional.ofNullable(user);
+        Session session = sessionFactory.getCurrentSession();
+        Query<User> query = session.createQuery("select u from User u where u.login=:login and u.password=:password");
+        query.setParameter("login", login);
+        query.setParameter("password", password);
+        return Optional.ofNullable(query.getSingleResult());
     }
 
     @Override
     public Optional<User> getUserByLogin(String login) {
-        User user = null;
+        Session session = sessionFactory.getCurrentSession();
+        Query<User> query = session.createQuery("select u from User u where u.login=:login");
+        query.setParameter("login", login);
         try {
-            user = jdbcTemplate.queryForObject(GET_USER_BY_LOGIN, (RowMapper<User>) (rs, rowNum) -> User.builder()
-                    .id(rs.getInt("id"))
-                    .login(rs.getString("login"))
-                    .password(rs.getString("password"))
-                    .name(rs.getString("name"))
-                    .surname(rs.getString("surname"))
-                    .dateBorn(rs.getDate("birth_date").toLocalDate())
-                    .eMail(rs.getString("email"))
-                    .balance(rs.getBigDecimal("balance"))
-                    .build(), login);
+            return Optional.ofNullable(query.getSingleResult());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Not unique user");
         }
-        return Optional.ofNullable(user);
+        return Optional.empty();
     }
 
     @Override
     public User create(User entity) {
-        jdbcTemplate.update(INSERT_NEW_USER, entity.getName(), entity.getSurname(), entity.getEMail(), entity.getPassword(),
-                entity.getLogin(), Date.valueOf(entity.getDateBorn()), entity.getBalance());
-        return getUserByLogin(entity.getLogin()).get();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(entity);
+        transaction.commit();
+        session.close();
+        return entity;
     }
 
     //method should be updated
     @Override
     public List<User> read() {
-        return jdbcTemplate.query(GET_ALL_USERS, (rs, rowNum) -> User.builder()
-                .id(rs.getInt("id"))
-                .login(rs.getString("login"))
-                .password(rs.getString("password"))
-                .name(rs.getString("name"))
-                .surname(rs.getString("surname"))
-                .dateBorn(rs.getDate("birth_date").toLocalDate())
-                .eMail(rs.getString("email"))
-                .balance(rs.getBigDecimal("balance"))
-                .build());
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery(" from User").list();
     }
 
     //method should be updated
     @Override
     public User update(User entity) {
-        jdbcTemplate.update(UPDATE_USER, entity.getName(), entity.getSurname(), entity.getEMail(), entity.getPassword(),
-                entity.getLogin(), Date.valueOf(entity.getDateBorn()), entity.getBalance(), entity.getLogin());
-        return getUserByLogin(entity.getLogin()).get();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        User user = session.get(User.class, entity.getId());
+        user.setName(entity.getName());
+        user.setSurname(entity.getSurname());
+        user.setBalance(entity.getBalance());
+        user.setDateBorn(entity.getDateBorn());
+        user.setLogin(entity.getLogin());
+        user.setPassword(entity.getPassword());
+        session.update(user);
+        transaction.commit();
+        session.close();
+        return user;
     }
 
     //method should be updated
     @Override
     public void delete(int id) {
-        jdbcTemplate.update(DELETE_USER, id);
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        User user = session.get(User.class, id);
+        session.delete(user);
+        transaction.commit();
+        session.close();
     }
 }
