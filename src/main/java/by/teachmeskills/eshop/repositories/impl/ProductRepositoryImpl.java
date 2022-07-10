@@ -11,6 +11,7 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -61,11 +62,10 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> getAllProductsByOrderId(int orderId) {
+    public Map<Product, Integer> getAllProductsByOrderId(int orderId) {
         Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("select p from Product p inner join p.orders o where o.id = :orderId");
-        query.setParameter("orderId", orderId);
-        return query.list();
+        Order order = session.get(Order.class, orderId);
+        return order.getProducts();
     }
 
     //method should be updated

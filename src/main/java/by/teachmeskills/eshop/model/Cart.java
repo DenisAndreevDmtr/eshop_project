@@ -64,15 +64,7 @@ public class Cart extends BaseEntity {
         }
         totalPrice = totalPrice.subtract(product.getPrice());
     }
-    public List<Product> getProductsAndAmount() {
-        List<Product> listProducts = new ArrayList(products.keySet());
-        List<Integer> count = new ArrayList(products.values());
-        List<Product> resultProduct = new ArrayList<>();
-        for (int i = 0; i < listProducts.size(); i++) {
-            for (int j = 0; j < count.get(i); j++) {
-                resultProduct.add(listProducts.get(i));
-            }
-        }
-        return resultProduct;
+    public Map<Product, Integer> getProductsAndAmount() {
+        return products;
     }
 }

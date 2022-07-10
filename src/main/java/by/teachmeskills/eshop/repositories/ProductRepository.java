@@ -3,6 +3,7 @@ package by.teachmeskills.eshop.repositories;
 import by.teachmeskills.eshop.entities.Product;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductRepository extends BaseRepository<Product> {
 
@@ -12,7 +13,7 @@ public interface ProductRepository extends BaseRepository<Product> {
 
     List<Product> getListProductsByNameOrDesc(String param);
 
-    List<Product> getAllProductsByOrderId(int id);
+    Map<Product, Integer> getAllProductsByOrderId(int id);
 
     long countAllProductsByCategory(int categoryId);
 

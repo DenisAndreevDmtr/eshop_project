@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 
 import static by.teachmeskills.eshop.utils.EshopConstants.SHOPPING_CART;
 import static by.teachmeskills.eshop.utils.PagesPathEnum.CART_PAGE;
@@ -69,10 +69,10 @@ public class CartService {
 
     public ModelAndView checkOut(Cart shopCart, User user) {
         ModelMap model = new ModelMap();
-        List<Product> productList = shopCart.getProductsAndAmount();
+        Map<Product, Integer> products= shopCart.getProductsAndAmount();
         BigDecimal priceOrder = shopCart.getTotalPrice();
         LocalDate date = LocalDate.now();
-        Order order = new Order(priceOrder, date, user, productList);
+        Order order = new Order(priceOrder, date, user, products);
         Order createdOrder = orderRepository.create(order);
         model.addAttribute(PRICE_ORDER.getValue(), shopCart.getTotalPrice());
         model.addAttribute(ID_ORDER.getValue(), createdOrder.getId());

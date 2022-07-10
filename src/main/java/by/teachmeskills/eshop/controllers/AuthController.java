@@ -35,11 +35,6 @@ public class AuthController {
         return userService.authenticate(user);
     }
 
-    @GetMapping("/profile")
-    public ModelAndView getUserData(@ModelAttribute(USER) User user) {
-        return userService.getDataAboutLoggedInUser(user);
-    }
-
     @GetMapping("/profile/{number}")
     public ModelAndView getUserData(@ModelAttribute(USER) User user,
                                     @PathVariable int number) {

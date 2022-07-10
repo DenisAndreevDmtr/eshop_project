@@ -61,12 +61,12 @@
         <c:forEach items="${userOrders}" var="userOrder">
             <div class="order">
                 <div class="order-info">
-                    <p>ID number order:<b> ${userOrder.getIdOrder()}</b></p>
-                    <p> Sum order:<b> ${userOrder.getSumOrder()}</b></p>
+                    <p>ID number order:<b> ${userOrder.getId()}</b></p>
+                    <p> Sum order:<b> ${userOrder.getPriceOrder()}</b></p>
                     <p> Date order:<b> ${userOrder.getDate()}</b></p>
                 </div>
                 <div class="row order-list">
-                    <c:forEach items="${userOrder.getProductAndAmount().entrySet()}" var="product">
+                    <c:forEach items="${userOrder.getProducts().entrySet()}" var="product">
                         <div class="card-body order-product">
                             <img class="card-img" style="width:50px;height:50px"
                                  src="${contextPath}/images/${product.getKey().getImageName()}" alt="Product image"/>

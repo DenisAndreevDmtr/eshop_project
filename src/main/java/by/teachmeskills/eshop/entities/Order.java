@@ -7,16 +7,15 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -33,32 +32,35 @@ public class Order extends BaseEntity {
     private LocalDate date;
     @ManyToOne
     private User user;
-    @ManyToMany
-    @JoinTable(name="order_product", joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> productsInOrder;
+    @ElementCollection
+    @MapKeyJoinColumn(name = "product_id")
+    @Column(name = "product_amount", nullable = false)
+    private Map<Product, Integer> products = new HashMap<>();
 
-    public Order(int id, BigDecimal priceOrder, LocalDate date, User user) {
+    public Map<Product, Integer> getProducts() {
+        return Collections.unmodifiableMap(products);
+    }
+
+    public void addProducts(Product product, int quantity) {
+        products.merge(product, quantity, Integer::sum);
+    }
+
+    public void removeItem(Product product) {
+        products.computeIfPresent(product, (k, v) -> v > 1 ? v - 1 : null);
+    }
+
+    public Order(BigDecimal priceOrder, LocalDate date, User user, Map<Product, Integer> products) {
+        this.priceOrder = priceOrder;
+        this.date = date;
+        this.user = user;
+        this.products = products;
+    }
+
+    public Order(int id, BigDecimal priceOrder, LocalDate date, User user, Map<Product, Integer> products) {
         super(id);
         this.priceOrder = priceOrder;
         this.date = date;
         this.user = user;
-    }
-
-    public Order(BigDecimal priceOrder, LocalDate date, User user) {
-        this.priceOrder = priceOrder;
-        this.date = date;
-        this.user = user;
-    }
-
-    public Order(BigDecimal priceOrder, LocalDate date, User user, List<Product> productsInOrder) {
-        this.priceOrder = priceOrder;
-        this.date = date;
-        this.user = user;
-        this.productsInOrder = productsInOrder;
-    }
-
-    public List<Product> getProductsInOrder() {
-        return productsInOrder;
+        this.products = products;
     }
 }

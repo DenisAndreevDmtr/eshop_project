@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,23 +29,6 @@ public class OrderRepositoryImpl implements OrderRepository {
         transaction.commit();
         session.close();
         return entity;
-    }
-
-    @Override
-    public Order getOrderByUserIdAndMaxId(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<Order> query = session.createQuery("select o from Order o where o.user.id=:id order by o.id desc");
-        query.setParameter("id", id);
-        query.setMaxResults(1);
-        return query.getSingleResult();
-    }
-
-    @Override
-    public List<Integer> getAllOrdersIdsByUserId(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<Order> query = session.createQuery("select o from Order o where o.user.id=:id order by o.date desc");
-        query.setParameter("id", id);
-        return query.stream().map(BaseEntity::getId).collect(Collectors.toList());
     }
 
     @Override
@@ -85,6 +69,18 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public List<Order>getAllOrdersByUserId(int idUser, int number){
+        List<Integer> ordersIds = getAllOrdersIdsByUserIdPaging(idUser, number);
+        List<Order> userOrders= new ArrayList<>();
+        for (int i = 0; i < ordersIds.size(); i++) {
+            Order order = getOrderById(ordersIds.get(i));
+            userOrders.add(order);
+        }
+        return userOrders;
+    }
+
+
+    @Override
     public List<Order> read() {
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery(" from Order").list();
@@ -97,7 +93,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         Transaction transaction = session.beginTransaction();
         Order order = session.get(Order.class, entity.getId());
         order.setPriceOrder(entity.getPriceOrder());
-        order.setProductsInOrder(entity.getProductsInOrder());
+        order.setProducts(entity.getProducts());
         order.setUser(entity.getUser());
         session.update(order);
         transaction.commit();
