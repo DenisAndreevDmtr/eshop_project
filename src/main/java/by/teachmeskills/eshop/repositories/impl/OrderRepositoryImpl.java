@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static by.teachmeskills.eshop.utils.EshopConstants.ORDERS_PER_PAGE;
+
 @Repository
 public class OrderRepositoryImpl implements OrderRepository {
     private final SessionFactory sessionFactory;
@@ -32,34 +34,16 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public long countAllOrdersByUser(int id){
+    public long countAllOrdersByUser(int id) {
         int pageSize = 5;
         Session session = sessionFactory.getCurrentSession();
         Query<Long> query = session.createQuery("select count(o) from Order o where o.user.id=:id");
         query.setParameter("id", id);
-        long resultQuery=query.getSingleResult();
-        if(resultQuery%pageSize!=0){
-            return query.getSingleResult()/pageSize+1;
+        long resultQuery = query.getSingleResult();
+        if (resultQuery % pageSize != 0) {
+            return query.getSingleResult() / pageSize + 1;
         }
-        return query.getSingleResult()/pageSize;
-    }
-
-    @Override
-    public List<Integer> getAllOrdersIdsByUserIdPaging(int userId, int pageReq) {
-        int pageSize = 5;
-        int firstResult;
-        if(pageReq>1){
-            firstResult=(pageReq-1)*pageSize;
-        }
-        else {
-            firstResult=0;
-        }
-        Session session = sessionFactory.getCurrentSession();
-        Query<Order> query = session.createQuery("select o from Order o where o.user.id=:id order by o.id desc");
-        query.setParameter("id", userId);
-        query.setFirstResult(firstResult);
-        query.setMaxResults(pageSize);
-        return query.stream().map(BaseEntity::getId).collect(Collectors.toList());
+        return query.getSingleResult() / pageSize;
     }
 
     @Override
@@ -69,14 +53,20 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order>getAllOrdersByUserId(int idUser, int number){
-        List<Integer> ordersIds = getAllOrdersIdsByUserIdPaging(idUser, number);
-        List<Order> userOrders= new ArrayList<>();
-        for (int i = 0; i < ordersIds.size(); i++) {
-            Order order = getOrderById(ordersIds.get(i));
-            userOrders.add(order);
+    public List<Order> getAllOrdersByUserId(int userId, int pageReq) {
+        Session session = sessionFactory.getCurrentSession();
+        Query<Order> query = session.createQuery("select o from Order o where o.user.id=:id order by o.id desc");
+        int pageSize = ORDERS_PER_PAGE;
+        int firstResult;
+        if (pageReq > 1) {
+            firstResult = (pageReq - 1) * pageSize;
+        } else {
+            firstResult = 0;
         }
-        return userOrders;
+        query.setParameter("id", userId);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageSize);
+        return query.list();
     }
 
 
@@ -94,6 +84,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         Order order = session.get(Order.class, entity.getId());
         order.setPriceOrder(entity.getPriceOrder());
         order.setProducts(entity.getProducts());
+        order.setDateCreation(entity.getDateCreation());
         order.setUser(entity.getUser());
         session.update(order);
         transaction.commit();

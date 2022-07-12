@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -27,8 +28,23 @@ public class Category extends BaseEntity {
     @Column(name = "rating")
     private int rating;
     @Column(name = "image_Path")
-    private String imageName;
+    private String imagePath;
     @OneToMany(mappedBy = "category", orphanRemoval = true, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<Product> productList;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Category category = (Category) o;
+        return rating == category.rating && Objects.equals(name, category.name) &&
+                Objects.equals(imagePath, category.imagePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, rating, imagePath);
+    }
 }

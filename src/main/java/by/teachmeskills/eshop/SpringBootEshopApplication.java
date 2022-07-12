@@ -24,6 +24,7 @@ public class SpringBootEshopApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringBootEshopApplication.class, args);
     }
+
     @Bean(name = "dataSource")
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();

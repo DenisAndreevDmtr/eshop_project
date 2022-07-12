@@ -35,7 +35,7 @@
         <div class="card w-25 m-1" type="product">
             <div class="card-body">
                 <img class="card-img" style="width:45%;height:100%"
-                     src="${contextPath}/images/${product.getImageName()}" alt="Product image">
+                     src="${contextPath}/images/${product.getImagePath()}" alt="Product image">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item"><b>Name:</b> <a>${product.getName()}</a></li>
                     <li class="list-group-item"><b>Description:</b> <a>${product.getDescription()}</a>
@@ -44,7 +44,7 @@
                 </ul>
             </div>
             <div class="cart-amount">
-                <b>Amount:</b> <a>${sessionScope.cart.getAmount(product)}
+                <b>Amount:</b> <a>${sessionScope.cart.getQuantity(product)}
                 <a href="${contextPath}/cart/increase?product_id=${product.getId()}">
                     <i class="fa-solid fa-circle-plus fa-2x" style="color: black"></i>
                 </a>

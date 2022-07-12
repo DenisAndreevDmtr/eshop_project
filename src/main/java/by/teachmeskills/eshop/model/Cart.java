@@ -22,12 +22,12 @@ public class Cart extends BaseEntity {
 
     public void addProduct(Product product) {
         if (products.containsKey(product)) {
-            Integer amount = products.get(product);
-            amount = amount + 1;
-            products.put(product, amount);
+            Integer quantity = products.get(product);
+            quantity = quantity + 1;
+            products.put(product, quantity);
         } else {
-            Integer amount = 1;
-            products.put(product, amount);
+            Integer quantity = 1;
+            products.put(product, quantity);
         }
         totalPrice = totalPrice.add(product.getPrice());
     }
@@ -42,7 +42,7 @@ public class Cart extends BaseEntity {
         return new ArrayList<>(products.keySet());
     }
 
-    public int getAmount(Product product) {
+    public int getQuantity(Product product) {
         return products.get(product);
     }
 
@@ -54,17 +54,18 @@ public class Cart extends BaseEntity {
         products.clear();
     }
 
-    public void decreaseAmount(Product product) {
-        int amount = products.get(product);
-        if (amount > 1) {
-            amount = amount - 1;
-            products.put(product, amount);
+    public void decreaseQuantity(Product product) {
+        int quantity = products.get(product);
+        if (quantity > 1) {
+            quantity = quantity - 1;
+            products.put(product, quantity);
         } else {
             products.remove(product);
         }
         totalPrice = totalPrice.subtract(product.getPrice());
     }
-    public Map<Product, Integer> getProductsAndAmount() {
+
+    public Map<Product, Integer> getProductsAndQuantity() {
         return products;
     }
 }

@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
         modelMap.addAttribute(LOGGED_IN_USER.getValue(), loggedInUser);
         int idUser = loggedInUser.getId();
         user.setId(idUser);
-        List<Order> userOrders=orderRepository.getAllOrdersByUserId(idUser, number);
+        List<Order> userOrders = orderRepository.getAllOrdersByUserId(idUser, number);
         long numberPages = orderRepository.countAllOrdersByUser(idUser);
         List<Long> listPages = new ArrayList<>();
         for (long i = 1; i <= numberPages; i++) {

@@ -1,5 +1,6 @@
 package by.teachmeskills.eshop.entities;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -29,12 +31,13 @@ public class Order extends BaseEntity {
     @Column(name = "price")
     private BigDecimal priceOrder;
     @Column(name = "date_Order")
-    private LocalDate date;
+    private LocalDate dateCreation;
     @ManyToOne
     private User user;
+    @Builder.Default
     @ElementCollection
     @MapKeyJoinColumn(name = "product_id")
-    @Column(name = "product_amount", nullable = false)
+    @Column(name = "product_quantity", nullable = false)
     private Map<Product, Integer> products = new HashMap<>();
 
     public Map<Product, Integer> getProducts() {
@@ -49,18 +52,17 @@ public class Order extends BaseEntity {
         products.computeIfPresent(product, (k, v) -> v > 1 ? v - 1 : null);
     }
 
-    public Order(BigDecimal priceOrder, LocalDate date, User user, Map<Product, Integer> products) {
-        this.priceOrder = priceOrder;
-        this.date = date;
-        this.user = user;
-        this.products = products;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Order order = (Order) o;
+        return Objects.equals(priceOrder, order.priceOrder) && Objects.equals(dateCreation, order.dateCreation) && Objects.equals(user, order.user) && Objects.equals(products, order.products);
     }
 
-    public Order(int id, BigDecimal priceOrder, LocalDate date, User user, Map<Product, Integer> products) {
-        super(id);
-        this.priceOrder = priceOrder;
-        this.date = date;
-        this.user = user;
-        this.products = products;
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), priceOrder, dateCreation);
     }
 }

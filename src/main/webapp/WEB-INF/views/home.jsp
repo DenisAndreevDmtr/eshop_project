@@ -38,7 +38,7 @@
                     <div class="card-body">
                         <a href="${contextPath}/category/${category.getId()}/1">${category.getName()}</a>
                         <img class="card-img" style="width:150px;height:120px"
-                             src="${contextPath}/images/${category.getImageName()}" alt="Card image">
+                             src="${contextPath}/images/${category.getImagePath()}" alt="Card image">
 
                     </div>
                 </div>

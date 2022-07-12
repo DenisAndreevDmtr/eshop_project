@@ -31,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping
-    public ModelAndView login(@ModelAttribute(USER) User user) throws AuthorizationException{
+    public ModelAndView login(@ModelAttribute(USER) User user) throws AuthorizationException {
         return userService.authenticate(user);
     }
 

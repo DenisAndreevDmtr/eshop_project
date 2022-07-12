@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class Product extends BaseEntity {
     @Column(name = "name")
     private String name;
     @Column(name = "image_Path")
-    private String imageName;
+    private String imagePath;
     @Column(name = "description")
     private String description;
     @Column(name = "price")
@@ -33,20 +34,17 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    public Product(int id, String name, String imageName, String description, BigDecimal price, Category category) {
-        super(id);
-        this.name = name;
-        this.imageName = imageName;
-        this.description = description;
-        this.price = price;
-        this.category = category;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Product product = (Product) o;
+        return Objects.equals(name, product.name) && Objects.equals(imagePath, product.imagePath) && Objects.equals(description, product.description) && Objects.equals(price, product.price);
     }
 
-    public Product(String name, String imageName, String description, BigDecimal price, Category category) {
-        this.name = name;
-        this.imageName = imageName;
-        this.description = description;
-        this.price = price;
-        this.category = category;
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, imagePath, description, price);
     }
 }

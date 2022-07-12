@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static by.teachmeskills.eshop.utils.EshopConstants.PRODUCTS_PER_PAGE;
+
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
     private final SessionFactory sessionFactory;
@@ -76,7 +78,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         Product product = session.get(Product.class, entity.getId());
         product.setName(entity.getName());
         product.setDescription(entity.getDescription());
-        product.setImageName(entity.getImageName());
+        product.setImagePath(entity.getImagePath());
         product.setPrice(entity.getPrice());
         product.setCategory(entity.getCategory());
         session.update(product);
@@ -97,27 +99,26 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public long countAllProductsByCategory(int categoryId){
-        int pageSize = 1;
+    public long countAllProductsByCategory(int categoryId) {
+        int pageSize = PRODUCTS_PER_PAGE;
         Session session = sessionFactory.getCurrentSession();
         Query<Long> query = session.createQuery("select count(p) from Product p where p.category.id=:categoryId");
         query.setParameter("categoryId", categoryId);
-        long resultQuery=query.getSingleResult();
-        if(resultQuery%pageSize!=0){
-            return query.getSingleResult()/pageSize+1;
+        long resultQuery = query.getSingleResult();
+        if (resultQuery % pageSize != 0) {
+            return query.getSingleResult() / pageSize + 1;
         }
-        return query.getSingleResult()/pageSize;
+        return query.getSingleResult() / pageSize;
     }
 
     @Override
     public List<Product> getAllProductsByCategoryIdPaging(int categoryId, int pageReq) {
         int pageSize = 1;
         int firstResult;
-        if(pageReq>1){
-            firstResult=(pageReq-1)*pageSize;
-        }
-        else {
-            firstResult=0;
+        if (pageReq > 1) {
+            firstResult = (pageReq - 1) * pageSize;
+        } else {
+            firstResult = 0;
         }
         Session session = sessionFactory.getCurrentSession();
         Query<Product> query = session.createQuery("select p from Product p where p.category.id=:categoryId order by p.name asc");
@@ -129,15 +130,15 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public long countProductsByNameOrDesc(String param) {
-        int pageSize = 5;
+        int pageSize = PRODUCTS_PER_PAGE;
         String requestDB = '%' + param + '%';
         Session session = sessionFactory.getCurrentSession();
         Query<Long> query = session.createQuery("select count(p) from Product p where p.name like :requestDB or p.description like: requestDB order by p.name asc");
         query.setParameter("requestDB", requestDB);
-        long resultQuery=query.getSingleResult();
-        if(resultQuery%pageSize!=0){
-            return query.getSingleResult()/pageSize+1;
+        long resultQuery = query.getSingleResult();
+        if (resultQuery % pageSize != 0) {
+            return query.getSingleResult() / pageSize + 1;
         }
-        return query.getSingleResult()/pageSize;
+        return query.getSingleResult() / pageSize;
     }
 }

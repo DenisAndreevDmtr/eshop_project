@@ -24,7 +24,6 @@ public class CartController {
     private static final String SHOPPING_CART = "cart";
     private final CartService cartService;
 
-
     public CartController(CartService cartService) {
         this.cartService = cartService;
     }

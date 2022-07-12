@@ -71,7 +71,7 @@
                 </p>
                 <div class="card-body">
                     <img class="card-img" style="width:45%;height:100%"
-                         src="images/${searchitem.getImageName()}" alt="Product image">
+                         src="images/${searchitem.getImagePath()}" alt="Product image">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><b>Name:</b> <a>${searchitem.getName()}</a></li>
                         <li class="list-group-item"><b>Description:</b> <a>${searchitem.getDescription()}</a></li>

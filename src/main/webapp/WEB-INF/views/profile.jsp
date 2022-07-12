@@ -63,13 +63,13 @@
                 <div class="order-info">
                     <p>ID number order:<b> ${userOrder.getId()}</b></p>
                     <p> Sum order:<b> ${userOrder.getPriceOrder()}</b></p>
-                    <p> Date order:<b> ${userOrder.getDate()}</b></p>
+                    <p> Date order:<b> ${userOrder.getDateCreation()}</b></p>
                 </div>
                 <div class="row order-list">
                     <c:forEach items="${userOrder.getProducts().entrySet()}" var="product">
                         <div class="card-body order-product">
                             <img class="card-img" style="width:50px;height:50px"
-                                 src="${contextPath}/images/${product.getKey().getImageName()}" alt="Product image"/>
+                                 src="${contextPath}/images/${product.getKey().getImagePath()}" alt="Product image"/>
                             <ul class="list-group order-product-info">
                                 <li class="list-group-item"><b>Name:</b> <a
                                         href="${contextPath}/product/${product.getKey().getId()}">${product.getKey().getName()}</a></li>

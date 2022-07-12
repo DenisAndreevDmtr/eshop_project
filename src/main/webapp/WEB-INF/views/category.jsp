@@ -43,7 +43,7 @@
                 </p>
                 <div class="card-body">
                     <img class="card-img" style="width:45%;height:100%"
-                         src="${contextPath}/images/${categoryitem.getImageName()}" alt="Product image">
+                         src="${contextPath}/images/${categoryitem.getImagePath()}" alt="Product image">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><b>Description:</b> <a>${categoryitem.getDescription()}</a>
                         </li>

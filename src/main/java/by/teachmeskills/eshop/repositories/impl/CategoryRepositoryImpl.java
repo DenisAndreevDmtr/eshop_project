@@ -68,7 +68,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         Transaction transaction = session.beginTransaction();
         Category category = session.get(Category.class, entity.getId());
         category.setName(category.getName());
-        category.setImageName(entity.getImageName());
+        category.setImagePath(entity.getImagePath());
         category.setRating(entity.getRating());
         session.update(category);
         transaction.commit();
