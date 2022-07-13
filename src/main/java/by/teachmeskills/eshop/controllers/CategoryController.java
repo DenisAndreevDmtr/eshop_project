@@ -20,4 +20,9 @@ public class CategoryController {
     public ModelAndView openCategoryPage(@PathVariable int id) {
         return categoryService.getCategoryData(id);
     }
+
+    @GetMapping("/{id}/{page}")
+    public ModelAndView openCategoryPagePaging(@PathVariable int id, @PathVariable int page) {
+        return categoryService.getCategoryDataPaging(id, page);
+    }
 }

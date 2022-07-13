@@ -1,45 +1,68 @@
 package by.teachmeskills.eshop.entities;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @Setter
 @SuperBuilder
 @Data
+@NoArgsConstructor
+@Entity
+@Table(name = "internet_shop.order")
 public class Order extends BaseEntity {
+    @Column(name = "price")
     private BigDecimal priceOrder;
-    private LocalDate date;
-    private int userId;
-    private List<Product> productsInOrder;
+    @Column(name = "date_Order")
+    private LocalDate dateCreation;
+    @ManyToOne
+    private User user;
+    @Builder.Default
+    @ElementCollection
+    @MapKeyJoinColumn(name = "product_id")
+    @Column(name = "product_quantity", nullable = false)
+    private Map<Product, Integer> products = new HashMap<>();
 
-    public Order(int id, BigDecimal priceOrder, LocalDate date, int userId) {
-        super(id);
-        this.priceOrder = priceOrder;
-        this.date = date;
-        this.userId = userId;
+    public Map<Product, Integer> getProducts() {
+        return Collections.unmodifiableMap(products);
     }
 
-    public Order(BigDecimal priceOrder, LocalDate date, int userId) {
-        this.priceOrder = priceOrder;
-        this.date = date;
-        this.userId = userId;
+    public void addProducts(Product product, int quantity) {
+        products.merge(product, quantity, Integer::sum);
     }
 
-    public Order(BigDecimal priceOrder, LocalDate date, int userId, List<Product> productsInOrder) {
-        this.priceOrder = priceOrder;
-        this.date = date;
-        this.userId = userId;
-        this.productsInOrder = productsInOrder;
+    public void removeItem(Product product) {
+        products.computeIfPresent(product, (k, v) -> v > 1 ? v - 1 : null);
     }
 
-    public List<Product> getProductsInOrder() {
-        return productsInOrder;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Order order = (Order) o;
+        return Objects.equals(priceOrder, order.priceOrder) && Objects.equals(dateCreation, order.dateCreation) && Objects.equals(user, order.user) && Objects.equals(products, order.products);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), priceOrder, dateCreation);
     }
 }

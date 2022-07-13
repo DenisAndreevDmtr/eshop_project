@@ -2,9 +2,7 @@ package by.teachmeskills.eshop.services.impl;
 
 import by.teachmeskills.eshop.entities.Category;
 import by.teachmeskills.eshop.entities.Order;
-import by.teachmeskills.eshop.entities.Product;
 import by.teachmeskills.eshop.entities.User;
-import by.teachmeskills.eshop.exceptions.AuthorizationException;
 import by.teachmeskills.eshop.repositories.OrderRepository;
 import by.teachmeskills.eshop.repositories.ProductRepository;
 import by.teachmeskills.eshop.repositories.UserRepository;
@@ -20,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+
 import static by.teachmeskills.eshop.utils.PagesPathEnum.HOME_PAGE;
 import static by.teachmeskills.eshop.utils.PagesPathEnum.PROFILE_PAGE;
 import static by.teachmeskills.eshop.utils.PagesPathEnum.REGISTER_PAGE;
@@ -29,6 +28,7 @@ import static by.teachmeskills.eshop.utils.PagesPathEnum.STATUS_REGISTER_PAGE;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.CATEGORIES;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.LOGGED_IN_USER;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.LOGIN;
+import static by.teachmeskills.eshop.utils.RequestParamsEnum.NUMBER_OF_PAGES;
 import static by.teachmeskills.eshop.utils.RequestParamsEnum.USER_ORDERS;
 
 @Service
@@ -87,28 +87,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ModelAndView getDataAboutLoggedInUser(User user) {
-        ModelAndView modelAndView = new ModelAndView();
-        ModelMap modelMap = new ModelMap();
-        User loggedInUser = userRepository.getUserByLoginAndPassword(user.getLogin(), user.getPassword()).get();
-        modelMap.addAttribute(LOGGED_IN_USER.getValue(), loggedInUser);
-        int idUser = loggedInUser.getId();
-        user.setId(idUser);
-        List<Order> userOrders = new ArrayList<>();
-        List<Integer> ordersIds = orderRepository.getAllOrdersIdsByUserId(idUser);
-        for (int i = 0; i < ordersIds.size(); i++) {
-            List<Product> orderProducts = productRepository.getAllProductsByOrderId(ordersIds.get(i));
-            Order order = orderRepository.getOrderById(ordersIds.get(i));
-            order.setProductsInOrder(orderProducts);
-            userOrders.add(order);
-        }
-        modelMap.addAttribute(USER_ORDERS.getValue(), userOrders);
-        modelAndView.setViewName(PROFILE_PAGE.getPath());
-        modelAndView.addAllObjects(modelMap);
-        return modelAndView;
-    }
-
-    @Override
     public ModelAndView registerNewUser(User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
@@ -139,5 +117,26 @@ public class UserServiceImpl implements UserService {
             modelAndView.addObject(field + "Error", Objects.requireNonNull(bindingResult.getFieldError(field))
                     .getDefaultMessage());
         }
+    }
+
+    @Override
+    public ModelAndView getDataAboutLoggedInUserPaging(User user, int number) {
+        ModelAndView modelAndView = new ModelAndView();
+        ModelMap modelMap = new ModelMap();
+        User loggedInUser = userRepository.getUserByLoginAndPassword(user.getLogin(), user.getPassword()).get();
+        modelMap.addAttribute(LOGGED_IN_USER.getValue(), loggedInUser);
+        int idUser = loggedInUser.getId();
+        user.setId(idUser);
+        List<Order> userOrders = orderRepository.getAllOrdersByUserId(idUser, number);
+        long numberPages = orderRepository.countAllOrdersByUser(idUser);
+        List<Long> listPages = new ArrayList<>();
+        for (long i = 1; i <= numberPages; i++) {
+            listPages.add(i);
+        }
+        modelMap.addAttribute(NUMBER_OF_PAGES.getValue(), listPages);
+        modelMap.addAttribute(USER_ORDERS.getValue(), userOrders);
+        modelAndView.setViewName(PROFILE_PAGE.getPath());
+        modelAndView.addAllObjects(modelMap);
+        return modelAndView;
     }
 }

@@ -7,9 +7,7 @@ import java.util.List;
 public interface OrderRepository extends BaseRepository<Order> {
     Order getOrderById(int id);
 
-    Order getOrderByUserIdAndMaxId(int id);
+    public long countAllOrdersByUser(int id);
 
-    List<Integer> getAllOrdersIdsByUserId(int id);
-
-    void createOrderProduct(int productId, int orderId);
+    List<Order> getAllOrdersByUserId(int idUser, int pageReq);
 }

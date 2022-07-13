@@ -77,4 +77,14 @@ public class ProductServiceImpl implements ProductService {
         model.addAttribute(SEARCH_RESULT.getValue(), requestProducts);
         return new ModelAndView(SEARCH_PRODUCT_PAGE.getPath(), model);
     }
+
+    @Override
+    public List<Product> getAllProductsByCategoryPaging(int categoryId, int number) {
+        return productRepository.getAllProductsByCategoryIdPaging(categoryId, number);
+    }
+
+    @Override
+    public long countAllProductsByCategory(int categoryId) {
+        return productRepository.countAllProductsByCategory(categoryId);
+    }
 }
