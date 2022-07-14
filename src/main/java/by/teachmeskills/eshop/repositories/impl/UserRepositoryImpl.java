@@ -2,45 +2,41 @@ package by.teachmeskills.eshop.repositories.impl;
 
 import by.teachmeskills.eshop.entities.User;
 import by.teachmeskills.eshop.repositories.UserRepository;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    private final SessionFactory sessionFactory;
-
-    public UserRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public User getUserById(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.get(User.class, id);
+        return entityManager.find(User.class, id);
     }
 
     @Override
     public Optional<User> getUserByLoginAndPassword(String login, String password) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<User> query = session.createQuery("select u from User u where u.login=:login and u.password=:password");
+        Query query = entityManager.createQuery("select u from User u where u.login=:login and u.password=:password");
         query.setParameter("login", login);
         query.setParameter("password", password);
-        return Optional.ofNullable(query.getSingleResult());
+        return Optional.ofNullable((User) query.getSingleResult());
     }
 
     @Override
     public Optional<User> getUserByLogin(String login) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<User> query = session.createQuery("select u from User u where u.login=:login");
+        Query query = entityManager.createQuery("select u from User u where u.login=:login");
         query.setParameter("login", login);
         try {
-            return Optional.ofNullable(query.getSingleResult());
+            return Optional.ofNullable((User) query.getSingleResult());
         } catch (Exception e) {
             System.out.println("Not unique user");
         }
@@ -49,47 +45,34 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User create(User entity) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(entity);
-        transaction.commit();
-        session.close();
+        entityManager.persist(entity);
         return entity;
     }
 
     //method should be updated
     @Override
     public List<User> read() {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(" from User").list();
+        return entityManager.createQuery("select u from User u").getResultList();
     }
 
     //method should be updated
     @Override
     public User update(User entity) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        User user = session.get(User.class, entity.getId());
+        User user = entityManager.find(User.class, entity.getId());
         user.setName(entity.getName());
         user.setSurname(entity.getSurname());
         user.setBalance(entity.getBalance());
         user.setDateBorn(entity.getDateBorn());
         user.setLogin(entity.getLogin());
         user.setPassword(entity.getPassword());
-        session.update(user);
-        transaction.commit();
-        session.close();
+        entityManager.persist(user);
         return user;
     }
 
     //method should be updated
     @Override
     public void delete(int id) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        User user = session.get(User.class, id);
-        session.delete(user);
-        transaction.commit();
-        session.close();
+        User user = entityManager.find(User.class, id);
+        entityManager.remove(user);
     }
 }

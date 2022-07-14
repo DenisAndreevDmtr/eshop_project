@@ -2,6 +2,7 @@ package by.teachmeskills.eshop.services.impl;
 
 import by.teachmeskills.eshop.entities.Category;
 import by.teachmeskills.eshop.entities.Order;
+import by.teachmeskills.eshop.entities.Product;
 import by.teachmeskills.eshop.entities.User;
 import by.teachmeskills.eshop.repositories.OrderRepository;
 import by.teachmeskills.eshop.repositories.ProductRepository;

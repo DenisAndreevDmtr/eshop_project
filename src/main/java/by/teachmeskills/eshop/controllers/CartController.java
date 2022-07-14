@@ -24,6 +24,7 @@ public class CartController {
     private static final String SHOPPING_CART = "cart";
     private final CartService cartService;
 
+
     public CartController(CartService cartService) {
         this.cartService = cartService;
     }
@@ -49,13 +50,13 @@ public class CartController {
     @GetMapping("/increase")
     public ModelAndView increaseProductAmount(@RequestParam(PRODUCT_ID_PARAM) String id, @ModelAttribute(SHOPPING_CART) Cart shopCart) {
         int productId = Integer.parseInt(id);
-        return cartService.increaseProductAmount(productId, shopCart);
+        return cartService.increaseProductQuantity(productId, shopCart);
     }
 
     @GetMapping("/decrease")
     public ModelAndView decreaseProductAmount(@RequestParam(PRODUCT_ID_PARAM) String id, @ModelAttribute(SHOPPING_CART) Cart shopCart) {
         int productId = Integer.parseInt(id);
-        return cartService.decreaseProductAmount(productId, shopCart);
+        return cartService.decreaseProductQuantity(productId, shopCart);
     }
 
     @GetMapping("/purchase")

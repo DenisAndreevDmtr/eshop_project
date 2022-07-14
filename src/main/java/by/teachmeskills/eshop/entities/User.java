@@ -51,6 +51,17 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Order> order;
 
+    public User(int id, String login, String password, String name, String surname, LocalDate dateBorn, String eMail, BigDecimal balance) {
+        super(id);
+        this.login = login;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.dateBorn = dateBorn;
+        this.eMail = eMail;
+        this.balance = balance;
+    }
+
     public boolean checkFieldsNotNull(User user) {
         boolean flag = true;
         if (user.getLogin().isEmpty() ||
@@ -70,10 +81,7 @@ public class User extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         User user = (User) o;
-        return Objects.equals(login, user.login) && Objects.equals(password, user.password) &&
-                Objects.equals(name, user.name) && Objects.equals(surname, user.surname) &&
-                Objects.equals(dateBorn, user.dateBorn) && Objects.equals(eMail, user.eMail) &&
-                Objects.equals(balance, user.balance);
+        return Objects.equals(login, user.login) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(dateBorn, user.dateBorn) && Objects.equals(eMail, user.eMail) && Objects.equals(balance, user.balance);
     }
 
     @Override

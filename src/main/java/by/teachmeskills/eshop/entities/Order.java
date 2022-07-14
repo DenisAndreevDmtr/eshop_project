@@ -1,6 +1,5 @@
 package by.teachmeskills.eshop.entities;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.Table;
@@ -34,8 +34,7 @@ public class Order extends BaseEntity {
     private LocalDate dateCreation;
     @ManyToOne
     private User user;
-    @Builder.Default
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyJoinColumn(name = "product_id")
     @Column(name = "product_quantity", nullable = false)
     private Map<Product, Integer> products = new HashMap<>();
@@ -58,7 +57,7 @@ public class Order extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Order order = (Order) o;
-        return Objects.equals(priceOrder, order.priceOrder) && Objects.equals(dateCreation, order.dateCreation) && Objects.equals(user, order.user) && Objects.equals(products, order.products);
+        return Objects.equals(priceOrder, order.priceOrder) && Objects.equals(dateCreation, order.dateCreation);
     }
 
     @Override
