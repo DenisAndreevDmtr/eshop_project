@@ -64,7 +64,6 @@ public class Cart extends BaseEntity {
         }
         totalPrice = totalPrice.subtract(product.getPrice());
     }
-
     public Map<Product, Integer> getProductsAndQuantity() {
         return products;
     }

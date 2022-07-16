@@ -2,57 +2,41 @@ package by.teachmeskills.eshop.repositories.impl;
 
 import by.teachmeskills.eshop.entities.Category;
 import by.teachmeskills.eshop.repositories.CategoryRepository;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 @Repository
 public class CategoryRepositoryImpl implements CategoryRepository {
-    private final SessionFactory sessionFactory;
-
-    public CategoryRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<Category> getAllCategories() {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(" from Category").list();
+        return entityManager.createQuery("select c from Category c").getResultList();
     }
 
     @Override
     public String getCategoryNameByID(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        return (String) session.get(Category.class.getName(), id);
+        Query query = entityManager.createQuery("select c.name from Category c where c.id=:id");
+        query.setParameter("id", id);
+        return (String) query.getSingleResult();
     }
-
 
     @Override
     public Category getCategoryById(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.get(Category.class, id);
+        return entityManager.find(Category.class, id);
     }
 
     //method should be updated
     @Override
     public Category create(Category entity) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(entity);
-        transaction.commit();
-        session.close();
+        entityManager.persist(entity);
         return entity;
-    }
-
-    private Category getCategoryByName(String nameCategory) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<Category> query = session.createQuery("select c from Category c where c.name=:nameCategory");
-        query.setParameter("nameCategory", nameCategory);
-        return query.getSingleResult();
     }
 
     //method should be updated
@@ -64,26 +48,18 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     //method should be updated
     @Override
     public Category update(Category entity) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        Category category = session.get(Category.class, entity.getId());
+        Category category = entityManager.find(Category.class, entity.getId());
         category.setName(category.getName());
         category.setImagePath(entity.getImagePath());
         category.setRating(entity.getRating());
-        session.update(category);
-        transaction.commit();
-        session.close();
+        entityManager.persist(category);
         return category;
     }
 
     //method should be updated
     @Override
     public void delete(int id) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        Category category = session.get(Category.class, id);
-        session.delete(category);
-        transaction.commit();
-        session.close();
+        Category category = entityManager.find(Category.class, id);
+        entityManager.remove(category);
     }
 }

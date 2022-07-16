@@ -44,7 +44,7 @@
                 </ul>
             </div>
             <div class="cart-amount">
-                <b>Amount:</b> <a>${sessionScope.cart.getQuantity(product)}
+                <b>Quantity:</b> <a>${sessionScope.cart.getQuantity(product)}
                 <a href="${contextPath}/cart/increase?product_id=${product.getId()}">
                     <i class="fa-solid fa-circle-plus fa-2x" style="color: black"></i>
                 </a>

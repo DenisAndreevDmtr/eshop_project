@@ -60,9 +60,9 @@ public class CategoryServiceImpl implements CategoryService {
         if (Optional.ofNullable(category).isPresent()) {
             List<Product> products = productService.getAllProductsByCategory(category.getId());
             category.setProductList(products);
-            long numberPages = productService.countAllProductsByCategory(id);
+            long numberPages=productService.countAllProductsByCategory(id);
             List<Long> listPages = new ArrayList<>();
-            for (long i = 1; i <= numberPages; i++) {
+            for (long i = 1; i <=numberPages; i++) {
                 listPages.add(i);
             }
             model.addAttribute(NUMBER_OF_PAGES.getValue(), listPages);
@@ -94,9 +94,9 @@ public class CategoryServiceImpl implements CategoryService {
         if (Optional.ofNullable(category).isPresent()) {
             List<Product> products = productService.getAllProductsByCategoryPaging(category.getId(), number);
             category.setProductList(products);
-            long numberPages = productService.countAllProductsByCategory(id);
+            long numberPages=productService.countAllProductsByCategory(id);
             List<Long> listPages = new ArrayList<>();
-            for (long i = 1; i <= numberPages; i++) {
+            for (long i = 1; i <=numberPages; i++) {
                 listPages.add(i);
             }
             model.addAttribute(NUMBER_OF_PAGES.getValue(), listPages);

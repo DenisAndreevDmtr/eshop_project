@@ -39,8 +39,7 @@ public class Category extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Category category = (Category) o;
-        return rating == category.rating && Objects.equals(name, category.name) &&
-                Objects.equals(imagePath, category.imagePath);
+        return rating == category.rating && Objects.equals(name, category.name) && Objects.equals(imagePath, category.imagePath);
     }
 
     @Override

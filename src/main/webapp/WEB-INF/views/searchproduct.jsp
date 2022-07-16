@@ -60,7 +60,6 @@
     </div>
 </form>
 
-
 <div class="container-searchresult">
     <c:forEach items="${search_result}" var="searchitem">
         <div class="card searchitems" type="searchitem">
@@ -81,8 +80,6 @@
             </div>
         </div>
     </c:forEach>
-
 </div>
-
 </body>
 </html>

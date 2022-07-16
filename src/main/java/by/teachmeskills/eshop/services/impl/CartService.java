@@ -6,8 +6,6 @@ import by.teachmeskills.eshop.entities.Product;
 import by.teachmeskills.eshop.entities.User;
 import by.teachmeskills.eshop.repositories.OrderRepository;
 import by.teachmeskills.eshop.repositories.ProductRepository;
-import lombok.Builder;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
@@ -51,7 +49,7 @@ public class CartService {
         return new ModelAndView(CART_PAGE.getPath(), modelParams);
     }
 
-    public ModelAndView increaseProductAmount(int productId, Cart shopCart) {
+    public ModelAndView increaseProductQuantity(int productId, Cart shopCart) {
         ModelMap modelParams = new ModelMap();
         Product product = productRepository.getProductById(productId);
         shopCart.addProduct(product);
@@ -60,7 +58,7 @@ public class CartService {
         return new ModelAndView(CART_PAGE.getPath(), modelParams);
     }
 
-    public ModelAndView decreaseProductAmount(int productId, Cart shopCart) {
+    public ModelAndView decreaseProductQuantity(int productId, Cart shopCart) {
         ModelMap modelParams = new ModelMap();
         Product product = productRepository.getProductById(productId);
         shopCart.decreaseQuantity(product);
@@ -71,7 +69,7 @@ public class CartService {
 
     public ModelAndView checkOut(Cart shopCart, User user) {
         ModelMap model = new ModelMap();
-        Map<Product, Integer> products = shopCart.getProductsAndQuantity();
+        Map<Product, Integer> products= shopCart.getProductsAndQuantity();
         BigDecimal priceOrder = shopCart.getTotalPrice();
         LocalDate date = LocalDate.now();
         Order order = Order.builder().priceOrder(priceOrder).

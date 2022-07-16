@@ -76,7 +76,7 @@
                                 <li class="list-group-item"><b>Description:</b> <a>${product.getKey().getDescription()}</a>
                                 </li>
                                 <li class="list-group-item"><b>Price per unit:</b> <a>${product.getKey().getPrice()}</a></li>
-                                <li class="list-group-item"><b>Amount in order:</b> <a>${product.getValue()}</a></li>
+                                <li class="list-group-item"><b>Quantity in order:</b> <a>${product.getValue()}</a></li>
                             </ul>
                         </div>
                     </c:forEach>
@@ -84,7 +84,6 @@
             </div>
         </c:forEach>
     </c:if>
-
     <div class="pages">
         <c:if test="${not empty number_of_pages}">
             <c:forEach items="${number_of_pages}" var="page">
@@ -93,8 +92,6 @@
             </c:forEach>
         </c:if>
     </div>
-
-
 </div>
 </body>
 </html>
