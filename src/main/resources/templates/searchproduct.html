@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <title>Search page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link th:href="@{/css/searchpage.css}" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/2a28c847cb.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" th:src="@{/scripts/searchScript.js}"></script>
+
+</head>
+<body>
+
+<h2 hidden>Search page</h2>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky">
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01" style="justify-content: space-between">
+        <ul class="navbar-nav mt-2 mt-lg-0" style="margin-right: 10%">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/home/files}" sec:authorize="hasRole('ADMIN')">
+                    Admin Panel
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/home}"> Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/search}">Advanced search<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/profile}">My profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cart}">Cart</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/product/hotprices}">Hot prices</a>
+            </li>
+        </ul>
+        <div class="btn-group" sec:authorize="!isAuthenticated()" style="margin-right: 50px">
+            <button type="button" class="btn btn-secondary btn-authorised"
+                    title="You need to be authenticated to have all functionality">Unauthenticated
+            </button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split btn-authorised"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{/user}">Login</a>
+                <a class="dropdown-item" th:href="@{/register}">Register</a>
+            </div>
+        </div>
+        <div class="btn-group" sec:authorize="isAuthenticated()">
+            <button type="button" class="btn btn-secondary btn-authorised" title="You have all user functionality"
+                    sec:authentication="name"></button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split btn-authorised"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{/user/profile}">My profile</a>
+                <a class="dropdown-item" th:href="@{/cart}">Shopping cart</a>
+                <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<br>
+<form method="post" th:action="@{/search/result}">
+    <div class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" id="searchParametr"
+               name="searchParametr" required style="width: 65%" th:value="${searchParametr}">
+        <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit">Search</button>
+    </div>
+
+    <div class="search-form">
+        <div style="width: 30%">
+            <div class="row" style="width: 65%; margin: 0 auto">
+                <div class="search-option">
+                    <div class="filter-sidebar">
+                        <div class="row card-body py-2 mb-3 bg-dark twhite" style="margin-top: 15px;">
+                            <h4><i class="fa fa-filter"></i> Search Options</h4>
+                        </div>
+                        <div class="form-group">
+                            <label>Categories:</label>
+                            <select class="form-control" id="searchCategory" name="searchCategory">
+                                <th:block th:if="${search_result==null}">
+                                    <option> All categories</option>
+                                    <td th:each="category : ${categories}">
+                                        <option><a th:text="${category.getName()}"></a></option>
+                                    </td>
+                                </th:block>
+                                <th:block th:if="${search_result!=null}">
+                                    <option selected th:value="${searchCategory}"><a th:text="${searchCategory}"></a>
+                                    </option>
+                                    <td th:if="${searchCategory!='All categories'}">
+                                        <option> All categories</option>
+                                    </td>
+                                    <td th:each="category : ${categories}">
+                                        <th:block th:if="${category.getName()!=searchCategory}">
+                                            <option><a th:text="${category.getName()}"></a></option>
+                                        </th:block>
+
+                                    </td>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Type prices:</label>
+                            <select class="form-control" id="typePrices" name="typePrices">
+                                <td th:if="${search_result==null}">
+                                    <option>All prices</option>
+                                    <option>Only promo</option>
+                                </td>
+                                <td th:if="${search_result!=null}">
+                                    <option selected th:value="${typePrices}"><a th:text="${typePrices}"></a>
+                                    </option>
+                                    <th:block th:if="${typePrices!='All prices'}">
+                                        <option>All prices</option>
+                                    </th:block>
+                                    <th:block th:if="${typePrices!='Only promo'}">
+                                        <option>Only promo</option>
+                                    </th:block>
+                                </td>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Order by:</label>
+                            <select class="form-control" id="orderBy" name="orderBy">
+                                <td th:if="${search_result==null}">
+                                    <option>Price ascending</option>
+                                    <option>Price descending</option>
+                                    <option>Name ascending</option>
+                                    <option>Name descending</option>
+                                    <option>Rating descending</option>
+                                    <option>Discount descending</option>
+                                </td>
+                                <td th:if="${search_result!=null}">
+                                    <option selected th:value="${orderBy}"><a th:text="${orderBy}"></a>
+                                    </option>
+                                    <th:block th:if="${orderBy!='Price ascending'}">
+                                        <option>Price ascending</option>
+                                    </th:block>
+                                    <th:block th:if="${orderBy!='Price descending'}">
+                                        <option>Price descending</option>
+                                    </th:block>
+                                    <th:block th:if="${orderBy!='Name ascending'}">
+                                        <option>Name ascending</option>
+                                    </th:block>
+                                    <th:block th:if="${orderBy!='Name descending'}">
+                                        <option>Name descending</option>
+                                    </th:block>
+                                    <th:block th:if="${orderBy!='Rating descending'}">
+                                        <option>Rating descending</option>
+                                    </th:block>
+                                    <th:block th:if="${orderBy!='Discount descending'}">
+                                        <option>Discount descending</option>
+                                    </th:block>
+                                </td>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price from:</label>
+                            <input type="number" min="0" class="form-control" id="priceFrom" placeholder="Price from"
+                                   name="priceFrom" th:value="${priceFrom}">
+                        </div>
+                        <div class="form-group">
+                            <label>Price to:</label>
+                            <input type="number" min="0" class="form-control" id="priceTo" placeholder="Price up to"
+                                   name="priceTo" th:value="${priceTo}">
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${search_result!=null}" id="search-container">
+            <div class="btn-group" style="margin-left: 80%;">
+                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false" th:text="${{pageSize}+' per page'}"></button>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" th:href="@{/search/result?pageNumber=0&pageSize=5}">5</a>
+                    <a class="dropdown-item" th:href="@{/search/result?pageNumber=0&pageSize=10}">10</a>
+                    <a class="dropdown-item" th:href="@{/search/result?pageNumber=0&pageSize=15}">15</a>
+                </div>
+            </div>
+
+            <div type="product" th:each="searchitem : ${search_result}">
+                <div class="card searchitems shadow-borders" type="categoryitem">
+                    <div>
+                        <p>
+                            <a class="product-name"
+                               th:href="@{'/product/'+${searchitem.getId()}}" th:text="${searchitem.getName()}"></a>
+                        <div class="star-fire-rating">
+                            <i class="fa-solid fa-medal fa-2x" th:if="${searchitem.isGoodRating()}"></i>
+                            <i class="fa-brands fa-hotjar fa-2x" th:if="${searchitem.isDiscounted()}"></i>
+                        </div>
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <img class="card-img" th:src="@{'/images/'+${searchitem.getMainImage()}}"
+                             alt="Product image"/>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><b>Description:</b>
+                                <br>
+                                <td th:each="descriptParametr : ${searchitem.getListOfParametrsDescription()}">
+                                    <a th:text="${descriptParametr}"></a>
+                                    <br>
+                                </td>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Price:</b>
+                                <th:block th:switch="${searchitem.isDiscounted()}">
+                                    <div class="promo-price" th:case="true">
+                                        <a th:text="${searchitem.getPrice()}"></a>
+                                        <text class="discount" th:text="${'-'+searchitem.getDiscount()+'%!'}"></text>
+                                        <s class="crossed-price" th:text="${searchitem.getPriceBeforeDiscount()}"></s>
+                                    </div>
+                                    <div class="not-promo-price" th:case="false">
+                                        <a th:text=${searchitem.getPrice()}></a>
+                                    </div>
+                                </th:block>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window.addEventListener("DOMContentLoaded", function (e) {
+                    var myHilitor2 = new Hilitor("search-container");
+                    myHilitor2.setMatchType("left");
+                    document.getElementById("searchParametr").addEventListener("keyup", function (e) {
+                        myHilitor2.apply(this.value);
+                    }, false);
+                }, false);
+
+            </script>
+        </div>
+
+    </div>
+
+</form>
+<br>
+<br>
+<div class="pages" th:if="${numberOfPages>0}">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <td th:if="${isFirst}">
+                <li class="page-item disabled">
+                    <a class="page-link" tabindex="-1">Previous</a>
+                </li>
+            </td>
+            <td th:if="${!isFirst}">
+                <li class="page-item">
+                    <a class="page-link"
+                       th:href="@{'/search/result?pageNumber='+${pageNumber-1}+'&pageSize='+${pageSize}}"
+                       tabindex="-1">Previous</a>
+                </li>
+            </td>
+            <td th:each="i: ${#numbers.sequence(0, numberOfPages-1)}">
+                <th:block th:switch="${pageNumber==i}">
+                    <li class="page-item active-page" aria-current="page" th:case="true">
+                        <a class="page-link" aria-current="page" th:text="${i+1}"></a>
+                    </li>
+                    <li class=" page-item" th:case="false">
+                        <a class="page-link active"
+                           th:href="@{'/search/result?pageNumber='+${i}+'&pageSize='+${pageSize}}"
+                           th:text="${i+1}"></a>
+                    </li>
+                </th:block>
+            <td>
+
+                <th:block th:switch="${isLast}">
+
+                    <li class="page-item disabled" th:case="true">
+                        <a class="page-link">Next</a>
+                    </li>
+
+                    <li class="page-item" th:case="false">
+                        <a class="page-link"
+                           th:href="@{'/search/result?pageNumber='+${pageNumber+1}+'&pageSize='+${pageSize}}">
+                            Next</a>
+                    </li>
+                </th:block>
+        </ul>
+    </nav>
+</div>
+<br>
+
+<footer class="text-lg-start bg-light text-muted">
+    <section class="d-flex justify-content-center p-4 border-bottom">
+        <div class="me-5 d-none d-lg-block">
+            <span>Get connected with us on social networks:</span>
+        </div>
+
+        <div style="margin: 0 15px">
+            <a th:href="@{https://www.linkedin.com/in/denis-andreyev/}" class="me-4 text-reset">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a th:href="@{https://github.com/DenisAndreevDmtr}" class="me-4 text-reset">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+    </section>
+    <section class="">
+        <div class="container text-md-start mt-4">
+            <div class="row mt-3">
+                <div class="text-center col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        <i class="fas fa-gem me-3"></i>Company name
+                    </h6>
+                    <p>
+                        Denis Andreev Eshop
+                    </p>
+                </div>
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+                    <p><i class="fas fa-home me-3"></i> Minsk, Belarus</p>
+                    <p>
+                        <i class="fas fa-envelope me-3"></i>
+                        andreevdenisdmtr@gmail.com
+                    </p>
+                    <p><i class="fas fa-phone me-3"></i> +375 29 365 14 15</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+        © 2022 Copyright:
+        <a class="text-reset fw-bold" href="https://github.com/DenisAndreevDmtr/">DenisAndreevDmtr</a>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <title>Order page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link th:href="@{/css/order.css}" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/2a28c847cb.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<h2 hidden>Order page</h2>
+
+<div class="card mt-50 mb-50" style="width: 25%;">
+    <div class="col d-flex">
+        <span class="text-muted" id="orderno">
+<a th:text="${'order # '+createdOrder.getId()}"></a>
+        </span>
+    </div>
+    <div class="title mx-auto">
+        Thank you for your order!
+    </div>
+    <table class="main order-table">
+        <span id="sub-title">
+            <p style="display: flex; justify-content: center;"><b>Order Summary</b></p>
+        </span>
+        <tr>
+            <td>
+                <p><b>Name</b></p>
+            </td>
+            <td>
+                <p><b>Quantity</b></p>
+            </td>
+            <td>
+                <p><b>Sum</b></p>
+            </td>
+        </tr>
+        <th:block th:each="product : ${createdOrder.getProducts().entrySet()}">
+            <tr>
+                <td>
+                    <p><b th:text="${product.getKey().getName()}"></b></p>
+                </td>
+                <td>
+                    <p><b th:text="${product.getValue()}"></b></p>
+                </td>
+                <td>
+                    <p><b th:text="${product.getKey().getPrice().longValue()*product.getValue()}"></b></p>
+                </td>
+            </tr>
+        </th:block>
+    </table>
+    <hr>
+    <div class="total">
+        <div class="row" style="margin: 0 15px;width: 90%;">
+            <div class="col"><b> Total:</b></div>
+            <div class="col d-flex justify-content-end">
+                <b th:text="${createdOrder.getPriceOrder()}"></b>
+            </div>
+        </div>
+        <a th:href="@{/user/profile}">
+            <button class="btn d-flex mx-auto">
+                My profile
+            </button>
+        </a>
+        <a th:href="@{/home}">
+            <button class="btn d-flex mx-auto">
+                Home
+            </button>
+        </a>
+    </div>
+
+</div>
+
+
+</body>
+</html>

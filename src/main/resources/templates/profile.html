@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <title>Profile</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link th:href="@{/css/profile.css}" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/2a28c847cb.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<h2 hidden>User info</h2>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky">
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <ul class="navbar-nav mt-2 mt-lg-0" style="margin-right: 10%">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/home/files}" sec:authorize="hasRole('ADMIN')">
+                    Admin Panel
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/home}">Home </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/search}">Advanced search</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/user/profile}">My profile<span
+                        class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cart}">Cart</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/product/hotprices}">Hot prices</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0" method="post" th:action="@{/search/result}" style="width: 45%">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" id="searchParametr"
+                   name="searchParametr" required style="width: 65%">
+            <input type hidden="text" id="searchCategory" name="searchCategory" value="All categories">
+            <input type hidden="number" id="priceFrom" name="priceFrom">
+            <input type hidden="number" id="priceTo" name="priceTo">
+            <input type hidden="text" id="typePrices" name="typePrices" value="All prices">
+            <input type hidden="text" id="orderBy" name="orderBy" value="Price ascending">
+            <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit">Search</button>
+        </form>
+        <div class="btn-group" sec:authorize="!isAuthenticated()">
+            <button type="button" class="btn btn-secondary btn-authorised"
+                    title="You need to be authenticated to have all functionality">Unauthenticated
+            </button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split btn-authorised"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{/user}">Login</a>
+                <a class="dropdown-item" th:href="@{/register}">Register</a>
+            </div>
+        </div>
+        <div class="btn-group" sec:authorize="isAuthenticated()">
+            <button type="button" class="btn btn-secondary btn-authorised" title="You have all user functionality"
+                    sec:authentication="name"></button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split btn-authorised"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{/user/profile}">My profile</a>
+                <a class="dropdown-item" th:href="@{/cart}">Shopping cart</a>
+                <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="m-4" th:if="${operationStatusSuccess!=null}">
+    <div class="alert alert-success alert-dismissible d-flex align-items-center fade show">
+        <i class="bi-check-circle-fill"></i>
+        <strong class="mx-2">Success!</strong> <a th:text="${successStatus}"></a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+<div class="m-4" th:if="${operationStatusFail!=null}">
+    <div class="alert alert-danger alert-dismissible d-flex align-items-center fade show">
+        <i class="bi-exclamation-octagon-fill"></i>
+        <strong class="mx-2">Error!</strong> Incorrect credentials!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="column">
+        <div class="card" style="margin: 15px auto 0 auto; width: 20%;">
+            <div class="card-body" style="display: flex; justify-content: space-around">
+                <div class="image-user">
+                    <img class="card-img"
+                         th:src="@{/images/userinfo.png}" alt="Userimage"/>
+                </div>
+                <div class="user-info">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><b>login:</b> <a th:text=${loggedInUser.getLogin()}></a>
+                        </li>
+                        <li class="list-group-item"><b>name:</b> <a th:text=${loggedInUser.getName()}></a>
+                        </li>
+                        <li class="list-group-item"><b>surname:</b> <a th:text=${loggedInUser.getSurname()}></a>
+                        </li>
+                        <li class="list-group-item"><b>dateborn:</b> <a th:text=${loggedInUser.getDateBorn()}></a>
+                        </li>
+                        <li class="list-group-item"><b>e-mail:</b> <a th:text=${loggedInUser.getEMail()}></a>
+                        </li>
+                        <li class="list-group-item"><b>balance:</b> <a th:text=${loggedInUser.getBalance()}></a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <a th:href="@{'/user/delete?userId='+${loggedInUser.getId()}}" sec:authorize="!hasRole('ADMIN')">
+                        <i class="fa-solid fa-eraser" title="Delete account"
+                           th:data-confirm-delete="|Your account and all information related to the account will be deleted!|"
+                           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"></i>
+                    </a>
+                    <a th:href="@{/user/redact}">
+                        <i class="fa-solid fa-pencil" title="Redact user info"
+                           th:data-confirm-delete="|Do you want to redact your user info?|"
+                           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-title">
+    <text class="main-title"><b>History</b></text>
+</div>
+<div class="container-orders">
+    <div class="btn-group" style="margin-left: 80%;">
+        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false" th:text="${{pageSize}+' per page'}"></button>
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" th:href="@{/user/profile?pageNumber=0&pageSize=5}">5</a>
+            <a class="dropdown-item" th:href="@{/user/profile?pageNumber=0&pageSize=10}">10</a>
+            <a class="dropdown-item" th:href="@{/user/profile?pageNumber=0&pageSize=15}">15</a>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <th:block th:if="${userOrders!=null}">
+            <div class="container" th:each="userOrder : ${userOrders}">
+                <div class="d-flex justify-content-between align-items-center py-3">
+                    <h2 class="h5 mb-0 order-text"><a th:text="${'Order #'+userOrder.getId()}"></a></h2>
+                </div>
+                <div class="row" style="align-items: center; justify-content: center;">
+                    <div class="col-lg-8">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="mb-3 d-flex justify-content-between">
+                                    <div>
+                                        <span class="me-3"><a
+                                                th:text="${'creation '+userOrder.getDateCreation()}"></a></span>
+                                        <span class="me-3">   status:</span>
+                                        <span class="badge rounded-pill bg-info">СOMPLETED</span>
+                                    </div>
+                                    <div class="d-flex">
+                                        <a th:href="@{'/order/download?orderId='+${userOrder.getId()}}">
+                                            <button class="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text"><i
+                                                    class="bi bi-download"></i> <span class="text">To CSV</span>
+                                            </button>
+                                        </a>
+                                    </div>
+                                </div>
+                                <table class="table table-borderless">
+                                    <tbody>
+                                    <tr>
+                                        <td>Product</td>
+                                        <td>Quantity</td>
+                                        <td>Sum</td>
+                                    </tr>
+                                    <tr th:each="product : ${userOrder.getProducts().entrySet()}">
+                                        <td class="td-class">
+                                            <div class="d-flex mb-2">
+                                                <div class="flex-shrink-0">
+                                                    <img class="img-fluid"
+                                                         th:src="@{'/images/'+${product.getKey().getMainImage()}}"
+                                                         alt="Product image" style="width: 70px; margin-right: 10px;">
+                                                </div>
+                                                <div class="flex-lg-grow-1 align-center ms-3">
+                                                    <h6 class="small mb-0">
+                                                        <a th:href="@{'/product/'+${product.getKey().getId()}}"
+                                                           th:text="${product.getKey().getName()}"></a>
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="td-class"><a th:text=${product.getValue()}></a></td>
+                                        <td class="text-end"><a
+                                                th:text="${product.getKey().getPrice().longValue()*product.getValue()}"></a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td colspan="2"><b class="sum-order">TOTAL</b></td>
+                                        <td class="text-end"><b th:text="${userOrder.getPriceOrder()}"></b></td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+
+
+    <div class="pages" th:if="${numberOfPages>0}">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <td th:if="${isFirst}">
+                    <li class="page-item disabled">
+                        <a class="page-link" tabindex="-1">Previous</a>
+                    </li>
+                </td>
+                <td th:if="${!isFirst}">
+                    <li class="page-item">
+                        <a class="page-link"
+                           th:href="@{'/user/profile?pageNumber='+${pageNumber-1}+'&pageSize='+${pageSize}}"
+                           tabindex="-1">Previous</a>
+                    </li>
+                </td>
+                <td th:each="i: ${#numbers.sequence(0, numberOfPages-1)}">
+                    <th:block th:switch="${pageNumber==i}">
+                        <li class="page-item active-page" aria-current="page" th:case="true">
+                            <a class="page-link" aria-current="page" th:text="${i+1}"></a>
+                        </li>
+                        <li class=" page-item" th:case="false">
+                            <a class="page-link active"
+                               th:href="@{'/user/profile?pageNumber='+${i}+'&pageSize='+${pageSize}}"
+                               th:text="${i+1}"></a>
+                        </li>
+                    </th:block>
+                <td>
+
+                    <th:block th:switch="${isLast}">
+
+                        <li class="page-item disabled" th:case="true">
+                            <a class="page-link">Next</a>
+                        </li>
+
+                        <li class="page-item" th:case="false">
+                            <a class="page-link"
+                               th:href="@{'/user/profile?pageNumber='+${pageNumber+1}+'&pageSize='+${pageSize}}">
+                                Next</a>
+                        </li>
+                    </th:block>
+            </ul>
+        </nav>
+    </div>
+</div>
+</div>
+<br>
+<footer class="text-lg-start bg-light text-muted">
+    <section class="d-flex justify-content-center p-4 border-bottom">
+        <div class="me-5 d-none d-lg-block">
+            <span>Get connected with us on social networks:</span>
+        </div>
+
+        <div style="margin: 0 15px">
+            <a th:href="@{https://www.linkedin.com/in/denis-andreyev/}" class="me-4 text-reset">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a th:href="@{https://github.com/DenisAndreevDmtr}" class="me-4 text-reset">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+    </section>
+    <section class="">
+        <div class="container text-md-start mt-4">
+            <div class="row mt-3">
+                <div class="text-center col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        <i class="fas fa-gem me-3"></i>Company name
+                    </h6>
+                    <p>
+                        Denis Andreev Eshop
+                    </p>
+                </div>
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+                    <p><i class="fas fa-home me-3"></i> Minsk, Belarus</p>
+                    <p>
+                        <i class="fas fa-envelope me-3"></i>
+                        andreevdenisdmtr@gmail.com
+                    </p>
+                    <p><i class="fas fa-phone me-3"></i> +375 29 365 14 15</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+        © 2022 Copyright:
+        <a class="text-reset fw-bold" href="https://github.com/DenisAndreevDmtr/">DenisAndreevDmtr</a>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <title>Product page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link th:href="@{/css/product.css}" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/2a28c847cb.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<h2 hidden>Product page</h2>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky">
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <ul class="navbar-nav mt-2 mt-lg-0" style="margin-right: 10%">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/home/files}" sec:authorize="hasRole('ADMIN')">
+                    Admin Panel
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/home}"> Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/search}">Advanced search</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/profile}">My profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cart}">Cart</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/product/hotprices}">Hot prices</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0" method="post" th:action="@{/search/result}" style="width: 45%">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" id="searchParametr"
+                   name="searchParametr" required style="width: 65%">
+            <input type hidden="text" id="searchCategory" name="searchCategory" value="All categories">
+            <input type hidden="number" id="priceFrom" name="priceFrom">
+            <input type hidden="number" id="priceTo" name="priceTo">
+            <input type hidden="text" id="typePrices" name="typePrices" value="All prices">
+            <input type hidden="text" id="orderBy" name="orderBy" value="Price ascending">
+            <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit">Search</button>
+        </form>
+        <div class="btn-group" sec:authorize="!isAuthenticated()">
+            <button type="button" class="btn btn-secondary btn-authorised"
+                    title="You need to be authenticated to have all functionality">Unauthenticated
+            </button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split btn-authorised"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{/user}">Login</a>
+                <a class="dropdown-item" th:href="@{/register}">Register</a>
+            </div>
+        </div>
+        <div class="btn-group" sec:authorize="isAuthenticated()">
+            <button type="button" class="btn btn-secondary btn-authorised" title="You have all user functionality"
+                    sec:authentication="name"></button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split btn-authorised"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{/user/profile}">My profile</a>
+                <a class="dropdown-item" th:href="@{/cart}">Shopping cart</a>
+                <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="main-title">
+    <p class="main-title" th:text="${product.getName()}"></p>
+</div>
+
+<div type="product">
+    <div class="card-body">
+        <div id="carouselExampleControls" class="carousel slide w-500" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item" th:each="image: ${product.getImages()}"
+                     th:classappend="${imageStat.first} ? active : ''">
+                    <img class="d-block w-100" th:src="@{'/images/'+${image.getImagePath()}}">
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="tru"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+        <div class="description-container">
+            <div class="description">
+                <b>Description:</b>
+                <br>
+                <td th:each="descriptParametr : ${product.getListOfParametrsDescription()}">
+                    <a th:text="${descriptParametr}"></a>
+                    <br>
+                </td>
+            </div>
+            <div>
+                <th:block th:switch="${product.isDiscounted()}">
+                    <div class="promo-price" th:case="true">
+                        <b>Price:</b>
+                        <div class="price-info text-center">
+                            <a th:text="${product.getPrice()}"></a>
+                            <text class="discount" th:text="${'-'+product.getDiscount()+'%!'}"></text>
+                            <s class="crossed-price" th:text="${product.getPriceBeforeDiscount()}"></s>
+                        </div>
+                    </div>
+                    <div class="not-promo-price" th:case="false">
+                        <b>Price:</b>
+                        <a th:text="${product.getPrice()}"></a>
+                    </div>
+                </th:block>
+            </div>
+            <div class="card-button">
+                <a th:href="@{'/cart/add?product_id='+${product.getId()}}"
+                   th:data-confirm-delete="|This product will be added into the shopping cart!|"
+                   onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false">
+                    <button type="button" class="btn btn-danger">Add to cart</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<footer class="text-lg-start bg-light text-muted">
+    <section class="d-flex justify-content-center p-4 border-bottom">
+        <div class="me-5 d-none d-lg-block">
+            <span>Get connected with us on social networks:</span>
+        </div>
+
+        <div style="margin: 0 15px">
+            <a th:href="@{https://www.linkedin.com/in/denis-andreyev/}" class="me-4 text-reset">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a th:href="@{https://github.com/DenisAndreevDmtr}" class="me-4 text-reset">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+    </section>
+    <section class="">
+        <div class="container text-md-start mt-4">
+            <div class="row mt-3">
+                <div class="text-center col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        <i class="fas fa-gem me-3"></i>Company name
+                    </h6>
+                    <p>
+                        Denis Andreev Eshop
+                    </p>
+                </div>
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+                    <p><i class="fas fa-home me-3"></i> Minsk, Belarus</p>
+                    <p>
+                        <i class="fas fa-envelope me-3"></i>
+                        andreevdenisdmtr@gmail.com
+                    </p>
+                    <p><i class="fas fa-phone me-3"></i> +375 29 365 14 15</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+        © 2022 Copyright:
+        <a class="text-reset fw-bold" href="https://github.com/DenisAndreevDmtr/">DenisAndreevDmtr</a>
+    </div>
+</footer>
+
+</body>
+</html>

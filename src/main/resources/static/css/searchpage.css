@@ -1,0 +1,205 @@
+.twhite {color:#fff;}
+.bg-grey {background:#efefef}
+.breadcrumb {background: none; margin: 0;font-weight: 300;padding-left: 0; font-size: 13px;}
+.breadcrumb a {color: #999;}
+.breadcrumb > .active {color: #696969;}
+.breadcrumb > li + li::before {content: "\203A";color: #999;padding: 0 8px;}
+
+.product-name {
+    display: flex;
+    justify-content: center;
+}
+
+.star-fire-rating{
+    display: flex;
+    justify-content: right;
+}
+
+.searchitems {
+    width: 80%;
+    margin: 10px;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: row;
+}
+
+.card-img {
+    width: 30%;
+}
+
+.sticky {
+    position: sticky;
+    position: -webkit-sticky;
+    z-index: 999;
+    top: 0px;
+}
+
+.list-group-item a{
+    font-size: 15px;
+}
+
+.shadow-borders {
+    border-radius: 1.25rem;
+    box-shadow: 0 -2px 4px 0 rgb(35 31 32 / 5%), 0 4px 8px 0 rgb(35 31 32 / 10%);
+}
+
+.shadow-borders:hover {
+    box-shadow: 0 -2px 4px 0 rgb(35 31 32 / 20%), 0 4px 8px 0 rgb(35 31 32 / 25%);
+}
+
+.list-group-item a{
+    font-size: 15px;
+}
+
+.promo-price a{
+    font-size: 20px;
+}
+
+.list-group-item promo-price a,text, s{
+    font-size: 20px;
+}
+
+.not-promo-price a,text{
+    font-size: 20px;
+}
+
+.main-title{
+    font-size: 20px;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    text-align: center;
+    align-items: center;
+    margin: 35px;
+}
+
+.product-name {
+    display: flex;
+    justify-content: center;
+}
+
+.product {
+    display: flex;
+    justify-content: center;
+}
+
+.form-inline{
+    display: flex;
+    justify-content: center;
+}
+
+.fa-award {
+    color: purple;
+}
+.fa-medal{
+    color: purple;
+}
+
+.fa-hotjar {
+    color: darkred;
+}
+
+.discount{
+    color: red;
+}
+
+.crossed-price{
+    color: red;
+}
+
+.search-form {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.search-option {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    border-radius: 1.25rem;
+    background-color: rgba(108,117,125, 0.85);
+}
+
+.btn-authorised {
+    color: #fff;
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.active-page .page-link {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #343a40;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+.pages {
+    display: flex;
+    justify-content: center;
+}
+
+.pages a {
+    margin: 0 2px;
+}
+
+.dropdown {
+    display: flex;
+    justify-content: right;
+    margin: 20px;
+}
+
+.auth-info {
+    display: flex;
+    justify-content: right;
+    margin: 20px;
+}
+
+.title-page{
+    display: flex;
+    justify-content: center;
+}
+
+.nav-button {
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-button:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#content {
+    margin: 0 auto 50px;
+}
+#footer {
+    position: fixed;
+    left: 0; bottom: 0;
+    padding: 10px;
+    width: 100%;
+}
+
+.search-button {
+    color: #dc3545!important;
+    border-color: #dc3545!important;
+}
+
+.search-button:hover {
+    background-color: #dc3545!important;
+    color: #ffffff!important;
+}

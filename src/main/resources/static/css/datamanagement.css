@@ -1,0 +1,56 @@
+.file-loader .btn-tertiary{color:#555;padding:0;line-height:40px;width:300px;margin:auto;display:block;border:2px solid #555}
+.file-loader .btn-tertiary:hover,.example-2 .btn-tertiary:focus{color:#888;border-color:#888}
+.file-loader .input-file{width:.1px;height:.1px;opacity:0;overflow:hidden;position:absolute;z-index:-1}
+.file-loader .input-file + .js-labelFile{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 10px;cursor:pointer}
+.file-loader .input-file + .js-labelFile .icon:before{content:"\f093"}
+.file-loader .input-file + .js-labelFile.has-file .icon:before{content:"\f00c";color:#5AAC7B}
+
+.flex-around {
+    display: flex;
+    justify-content: space-around;
+}
+
+.card-size {
+    margin-top: 15px;
+    width: 400px!important;
+    height: 550px!important;
+}
+
+.btn-100 {
+    width: 100px!important;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.width-150 {
+    width: 150px;
+}
+
+.flex-column-center {
+    display: flex!important;
+    flex-direction: column!important;
+    justify-content: center!important;
+}
+
+.small-card {
+    width: 400px;
+    height: 350px;
+}
+
+.mr-bottom {
+    margin-bottom: 15px;
+}
+
+.search-button {
+    color: #dc3545!important;
+    border-color: #dc3545!important;
+}
+
+.search-button:hover {
+    background-color: #dc3545!important;
+    color: #ffffff!important;
+}
