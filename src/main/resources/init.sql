@@ -1367,3 +1367,95 @@ insert into eshop.users (name, surname, email, password, login, birth_date, bala
 values ('denis', 'andreev', 'denis@gmail.com', '$2a$10$YLJCWM0Cz.TdXi1P5DjX3OUZHWtIvIVziBC55Ntp9QmJxnIybGsuS', 'vcxz',
         '1994-11-06', '80.00', 2);
 
+#--------------------------------------------------------
+--  DML for Table ESHOP.ORDERS
+#--------------------------------------------------------
+insert into eshop.orders (price, date_order, user_id)
+values (15372, NOW(), 1);
+insert into eshop.orders (price, date_order, user_id)
+values (2675, NOW(), 2);
+insert into eshop.orders (price, date_order, user_id)
+values (5600, NOW(), 1);
+insert into eshop.orders (price, date_order, user_id)
+values (4591, NOW(), 2);
+insert into eshop.orders (price, date_order, user_id)
+values (15372, NOW(), 1);
+insert into eshop.orders (price, date_order, user_id)
+values (2675, NOW(), 2);
+insert into eshop.orders (price, date_order, user_id)
+values (5600, NOW(), 1);
+insert into eshop.orders (price, date_order, user_id)
+values (4591, NOW(), 2);
+insert into eshop.orders (price, date_order, user_id)
+values (15372, NOW(), 1);
+insert into eshop.orders (price, date_order, user_id)
+values (2675, NOW(), 2);
+insert into eshop.orders (price, date_order, user_id)
+values (5600, NOW(), 1);
+insert into eshop.orders (price, date_order, user_id)
+values (4591, NOW(), 2);
+
+
+#--------------------------------------------------------
+--  DML for Table ESHOP.ORDER_PRODUCTS
+#--------------------------------------------------------
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (1, 1, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (1, 3, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (1, 4, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (1, 5, 5);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (2, 3, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (2, 7, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (3, 1, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (3, 2, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (4, 7, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (4, 8, 3);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (5, 1, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (5, 3, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (5, 4, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (5, 5, 5);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (6, 3, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (6, 7, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (7, 1, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (7, 2, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (8, 7, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (8, 8, 3);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (9, 1, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (9, 3, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (9, 4, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (9, 5, 5);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (10, 3, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (10, 7, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (11, 1, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (11, 2, 2);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (12, 7, 1);
+insert into eshop.order_products (order_id, product_id, product_quantity)
+values (12, 8, 3);

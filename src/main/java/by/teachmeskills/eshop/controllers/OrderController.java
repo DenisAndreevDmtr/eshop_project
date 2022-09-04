@@ -32,7 +32,7 @@ public class OrderController {
     }
 
     @PostMapping("/delete")
-    public ModelAndView getOrderToScvFile(int orderIdDelete) {
+    public ModelAndView deleteOrderById(int orderIdDelete) {
         return orderService.deleteOrderById(orderIdDelete);
     }
 }

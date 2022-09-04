@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static by.teachmeskills.eshop.utils.EshopConstants.CATEGORIES_CSV_FILE_NAME;
 import static by.teachmeskills.eshop.utils.EshopConstants.ERROR_PARAM;
 import static by.teachmeskills.eshop.utils.EshopConstants.FIELD_LOGIN;
 import static by.teachmeskills.eshop.utils.EshopConstants.FIELD_PASSWORD;
@@ -105,7 +104,7 @@ public class UserServiceImpl implements UserService {
             model.addAttribute(OPERATION_STATUS_SUCCESS, "You have deleted your account!");
             return new ModelAndView(SIGN_IN_PAGE.getPath(), model);
         } catch (Exception e) {
-            log.error("Сan`t delete user with id id");
+            log.error("Сan`t delete user with id " + id);
             model.addAttribute(OPERATION_STATUS_FAIL, "Сan`t delete your account. Try latter!");
             return new ModelAndView(PROFILE_PAGE.getPath(), model);
         }
@@ -140,7 +139,7 @@ public class UserServiceImpl implements UserService {
             modelAndView.setViewName(REGISTER_PAGE.getPath());
             return modelAndView;
         }
-        if (userRepository.getUserByLogin(user.getLogin()).isEmpty()) {
+        if (userRepository.findUserByLogin(user.getLogin()).isEmpty()) {
             User registeredUser = create(user);
             log.info("User with login" + registeredUser.getLogin() + " has just registered");
             modelMap.addAttribute(OPERATION_STATUS_SUCCESS, "Account with login " + registeredUser.getLogin() + ", was created!");
@@ -164,7 +163,7 @@ public class UserServiceImpl implements UserService {
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
         String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
-        userRepository.getUserByLogin(userLogin).ifPresent(user -> {
+        userRepository.findUserByLogin(userLogin).ifPresent(user -> {
             modelMap.addAttribute(LOGGED_IN_USER, user);
             Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(ID).descending());
             Page<Order> userOrders = orderRepository.getOrdersByUserId(user.getId(), paging);
@@ -201,8 +200,8 @@ public class UserServiceImpl implements UserService {
             return modelAndView;
         }
         String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (userRepository.getUserByLogin(user.getLogin()).isEmpty() || userLogin.equals(user.getLogin())) {
-            userRepository.getUserByLogin(userLogin).ifPresent(userInSystem -> {
+        if (userRepository.findUserByLogin(user.getLogin()).isEmpty() || userLogin.equals(user.getLogin())) {
+            userRepository.findUserByLogin(userLogin).ifPresent(userInSystem -> {
                 userInSystem.setPassword(passwordEncoder.encode(user.getPassword()));
                 userInSystem.setLogin(user.getLogin());
                 userInSystem.setName(user.getName());

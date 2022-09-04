@@ -76,7 +76,7 @@ public class CartService {
     public ModelAndView checkOutOrder(Cart shopCart) {
         ModelMap model = new ModelMap();
         String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
-        userRepository.getUserByLogin(userLogin).ifPresent(user -> {
+        userRepository.findUserByLogin(userLogin).ifPresent(user -> {
             Order createdOrder = orderRepository.save(createOrder(shopCart, user));
             model.addAttribute(CREATED_ORDER, createdOrder);
             shopCart.clear();

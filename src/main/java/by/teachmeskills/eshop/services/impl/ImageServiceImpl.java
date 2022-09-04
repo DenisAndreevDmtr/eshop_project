@@ -16,7 +16,6 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Optional;
 
-import static by.teachmeskills.eshop.utils.EshopConstants.CATEGORIES_CSV_FILE_NAME;
 import static by.teachmeskills.eshop.utils.EshopConstants.IMAGES_CSV_FILE_NAME;
 import static by.teachmeskills.eshop.utils.EshopConstants.OPERATION_STATUS_FAIL;
 import static by.teachmeskills.eshop.utils.EshopConstants.OPERATION_STATUS_SUCCESS;

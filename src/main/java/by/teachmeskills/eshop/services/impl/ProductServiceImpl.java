@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.teachmeskills.eshop.utils.EshopConstants.CATEGORIES;
-import static by.teachmeskills.eshop.utils.EshopConstants.CATEGORIES_CSV_FILE_NAME;
 import static by.teachmeskills.eshop.utils.EshopConstants.DISCOUNT;
 import static by.teachmeskills.eshop.utils.EshopConstants.NAME;
 import static by.teachmeskills.eshop.utils.EshopConstants.OPERATION_STATUS_FAIL;
