@@ -5,8 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
 
 public interface CategoryService extends BaseService<Category> {
     ModelAndView getCategoryData(int id, int pageNumber, int pageSize);

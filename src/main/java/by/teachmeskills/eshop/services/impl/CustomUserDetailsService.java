@@ -1,6 +1,5 @@
 package by.teachmeskills.eshop.services.impl;
 
-
 import by.teachmeskills.eshop.entities.User;
 import by.teachmeskills.eshop.repositories.UserRepository;
 import lombok.extern.log4j.Log4j;

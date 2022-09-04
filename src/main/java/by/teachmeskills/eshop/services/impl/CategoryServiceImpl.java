@@ -122,11 +122,13 @@ public class CategoryServiceImpl implements CategoryService {
         ModelMap model = new ModelMap();
         try {
             List<Category> csvCategories = csvUtil.parseCsvCategory(file);
-            if (Optional.ofNullable(csvCategories).isPresent()) {
+            if (Optional.ofNullable(csvCategories).isPresent() && csvCategories.size() > 0) {
                 categoryRepository.saveAll(csvCategories);
+                model.addAttribute(OPERATION_STATUS_SUCCESS, "You saved categories from file " + file.getOriginalFilename());
+                log.info("Сategories from file" + file.getOriginalFilename() + "have been saved");
+            } else {
+                throw new Exception();
             }
-            model.addAttribute(OPERATION_STATUS_SUCCESS, "You saved categories from file " + file.getOriginalFilename());
-            log.info("Сategories from file" + file.getOriginalFilename() + "have been saved");
         } catch (Exception e) {
             log.error("Сan`t save categories from file " + file.getOriginalFilename());
             model.addAttribute(OPERATION_STATUS_FAIL, "Сan`t save categories from the file " + file.getOriginalFilename() + ". Check, if such file is correct");
