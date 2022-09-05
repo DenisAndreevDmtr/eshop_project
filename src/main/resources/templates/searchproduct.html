@@ -201,8 +201,8 @@
                             <a class="product-name"
                                th:href="@{'/product/'+${searchitem.getId()}}" th:text="${searchitem.getName()}"></a>
                         <div class="star-fire-rating">
-                            <i class="fa-solid fa-medal fa-2x" th:if="${searchitem.isGoodRating()}"></i>
-                            <i class="fa-brands fa-hotjar fa-2x" th:if="${searchitem.isDiscounted()}"></i>
+                            <i class="fa-solid fa-medal fa-2x mr-right" th:if="${searchitem.isGoodRating()}"></i>
+                            <i class="fa-brands fa-hotjar fa-2x mr-right" th:if="${searchitem.isDiscounted()}"></i>
                         </div>
                         </p>
                     </div>

@@ -54,3 +54,18 @@
     background-color: #dc3545!important;
     color: #ffffff!important;
 }
+
+.btn-class {
+    border: none;
+    cursor: pointer;
+    margin: 0 10px;
+    background: white;
+    border-radius: 10px;
+    border-color: lightgrey;
+}
+
+.btn-authorised {
+    color: #fff;
+    background-color: #343a40!important;
+    border-color: #343a40!important;
+}
